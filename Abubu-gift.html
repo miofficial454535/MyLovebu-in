@@ -1,0 +1,1214 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#09070D"><link rel="icon" href="data:,"><meta name="mobile-web-app-capable" content="yes"><title>BuBu</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: sidebar (desktop) or bottom tabs (phone) around one scrolling view; dark romantic ground, glass cards, one glowing accent. */
+:root{
+  --bg:#09070D; --surf:#21132F; --surf2:#150D20; --tx:#EDE6FA; --mut:#A99BC4;
+  --ac:#9B5CFF; --pk:#FF6FAE; --line:rgba(155,92,255,.28); --glass:rgba(33,19,47,.62);
+  --ok:#5FD3A0; --warn:#FFC857; --bad:#FF6B7A; --on-ac:#fff;
+  --f-d:"DM Serif Display",Georgia,serif; --f-b:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fs:100; color-scheme:dark;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#FBF7FF;--surf:#FFFFFF;--surf2:#F1E9FB;--tx:#2A1B3D;--mut:#6D5C88;--line:rgba(110,60,200,.22);--glass:rgba(255,255,255,.75);color-scheme:light}}
+:root[data-theme="light"]{--bg:#FBF7FF;--surf:#FFFFFF;--surf2:#F1E9FB;--tx:#2A1B3D;--mut:#6D5C88;--line:rgba(110,60,200,.22);--glass:rgba(255,255,255,.75);color-scheme:light}
+:root[data-theme="dark"]{--bg:#09070D;--surf:#21132F;--surf2:#150D20;--tx:#EDE6FA;--mut:#A99BC4;--line:rgba(155,92,255,.28);--glass:rgba(33,19,47,.62);color-scheme:dark}
+*{box-sizing:border-box}
+html{font-size:calc(var(--fs)*1%)}
+body{background:var(--bg);color:var(--tx);font-family:var(--f-b);font-size:.95rem;line-height:1.5;padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60rem 30rem at 85% -10%,color-mix(in srgb,var(--ac) 22%,transparent),transparent 60%),radial-gradient(40rem 30rem at -10% 110%,color-mix(in srgb,var(--pk) 14%,transparent),transparent 60%);pointer-events:none}
+body.w-aurora::after{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 28%,transparent),transparent 45%),linear-gradient(20deg,color-mix(in srgb,var(--pk) 22%,transparent),transparent 50%)}
+body.w-plain::after{background:none}
+body.army::after{background:radial-gradient(50rem 30rem at 50% -10%,rgba(155,92,255,.35),transparent 60%),radial-gradient(30rem 20rem at 100% 100%,rgba(255,255,255,.06),transparent 60%)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-d);font-weight:400;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:1.9rem;line-height:1.15} h2{font-size:1.35rem} h3{font-size:1.1rem}
+p{margin:0}
+a{color:var(--pk)}
+:focus-visible{outline:2px solid var(--pk);outline-offset:2px}
+.app{display:grid;grid-template-columns:1fr;gap:0;max-width:1180px;margin:0 auto}
+.side{display:none}
+.view{padding-block:18px 110px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding-block:10px;background:linear-gradient(var(--bg) 70%,transparent)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-d);font-size:1.6rem;letter-spacing:.08em}
+.brand svg{width:30px;height:30px;filter:drop-shadow(0 0 8px var(--pk))}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--glass);border-radius:99px;padding:4px 11px;font-size:.78rem;color:var(--mut);white-space:nowrap}
+.pill.on{color:var(--tx);border-color:var(--ac)}
+.demo{border-color:var(--warn);color:var(--warn)}
+.card{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card.glow{border-color:transparent;background:linear-gradient(var(--surf),var(--surf)) padding-box,linear-gradient(120deg,var(--ac),var(--pk),var(--ac)) border-box;background-size:100% 100%,300% 300%;animation:gb 9s linear infinite}
+@keyframes gb{to{background-position:0 0,300% 0}}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid.sm{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.sb{justify-content:space-between}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mut{color:var(--mut);font-size:.85rem}
+.lab{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.big{font-family:var(--f-d);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--line);background:var(--surf2);color:var(--tx);border-radius:12px;padding:9px 14px;cursor:pointer;font-weight:600;font-size:.88rem;transition:transform .15s,border-color .15s}
+.btn:hover{border-color:var(--ac)} .btn:active{transform:scale(.96)}
+.btn.pri{background:linear-gradient(120deg,var(--ac),var(--pk));border-color:transparent;color:var(--on-ac)}
+.btn.sm{padding:5px 10px;font-size:.78rem;border-radius:9px}
+.btn.ghost{background:none}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+input,select,textarea{background:var(--surf2);border:1px solid var(--line);border-radius:12px;padding:9px 12px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:84px}
+input[type=color]{padding:2px;height:38px;width:56px}
+input[type=range]{padding:0}
+input[type=checkbox]{width:auto}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--mut)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.tabs .btn{white-space:nowrap}
+.tabs .btn.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 25%,var(--surf2))}
+.av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-d);font-size:1.4rem;color:#fff;background:linear-gradient(135deg,var(--ac),var(--pk));flex:none;position:relative}
+.av.fr{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--pk)}
+.chip{font-size:.72rem;border:1px solid var(--line);border-radius:8px;padding:2px 7px;color:var(--mut)}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--mut)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;background:var(--surf2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.item>div{min-width:0;overflow-wrap:anywhere}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;justify-content:space-around;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.nav button,.side button{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.68rem;font-weight:700;letter-spacing:.08em;cursor:pointer;padding:6px 10px;border-radius:12px}
+.nav button svg,.side button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button.on,.side button.on{color:var(--pk)}
+@media(min-width:820px){
+  .app{grid-template-columns:210px 1fr;gap:28px}
+  .side{display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;padding-block:22px;align-self:start}
+  .side button{flex-direction:row;gap:12px;font-size:.8rem;padding:11px 14px;width:100%}
+  .side button.on{background:var(--glass);border:1px solid var(--line)}
+  .nav{display:none} .view{padding-bottom:40px}
+}
+.bub{max-width:min(78%,420px);padding:8px 12px;border-radius:16px;position:relative;overflow-wrap:anywhere;cursor:pointer}
+.bub.me{align-self:flex-end;background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 55%,var(--pk)));color:#fff;border-bottom-right-radius:4px}
+.bub.her{align-self:flex-start;background:var(--surf);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub img{border-radius:10px;display:block;margin-bottom:6px;max-height:220px}
+.bub .meta{font-size:.68rem;opacity:.75;display:flex;gap:6px;justify-content:flex-end}
+.bub .rp{font-size:.74rem;border-left:2px solid var(--pk);padding-left:6px;opacity:.85;margin-bottom:4px}
+.bub .rx{position:absolute;bottom:-10px;right:8px;background:var(--surf);border:1px solid var(--line);border-radius:99px;font-size:.75rem;padding:0 6px;color:var(--tx)}
+.chat{display:flex;flex-direction:column;gap:12px;min-height:46vh;max-height:56vh;overflow-y:auto;padding:6px 4px 16px}
+.sep{align-self:center;font-size:.7rem;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:2px 10px}
+.wall-night .chat{background:none}
+.wall-hearts .chat{background:radial-gradient(circle at 20% 20%,rgba(255,111,174,.1) 0 2px,transparent 3px) 0 0/34px 34px}
+.wall-grid .chat{background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/28px 28px}
+canvas{max-width:100%;border-radius:14px;display:block;touch-action:none}
+.sky{width:100%;background:#05030A;border:1px solid var(--line)}
+.ttt{display:grid;grid-template-columns:repeat(3,76px);gap:8px;justify-content:center}
+.ttt button{height:76px;font-family:var(--f-d);font-size:2rem;background:var(--surf2);border:1px solid var(--line);border-radius:14px;cursor:pointer;color:var(--pk)}
+.mm{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px}
+.mm button{aspect-ratio:1;font-size:1.6rem;background:var(--surf2);border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.mm button.up{background:var(--surf);border-color:var(--pk)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--surf);border:1px solid var(--ac);border-radius:12px;padding:9px 16px;z-index:60;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:up .25s}
+@keyframes up{from{opacity:0;transform:translate(-50%,10px)}}
+.modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(5,3,10,.7);padding:20px}
+.modal>div{max-width:420px;width:100%}
+.splash{position:fixed;inset:0;z-index:99;background:var(--bg);display:grid;place-items:center;transition:opacity .6s}
+.splash.off{opacity:0;pointer-events:none}
+.splash svg{width:84px;height:84px;filter:drop-shadow(0 0 18px var(--pk));animation:beat 1.1s infinite}
+@keyframes beat{50%{transform:scale(1.12)}}
+.env{display:inline-block;transition:transform .5s}
+.letter-open{animation:unfold .6s}
+@keyframes unfold{from{opacity:0;transform:translateY(14px) scale(.96)}}
+.fl{position:fixed;bottom:-30px;z-index:50;pointer-events:none;animation:fly 3.2s ease-in forwards;font-size:1.4rem}
+@keyframes fly{to{transform:translateY(-105vh) rotate(25deg);opacity:0}}
+.stick{width:26px;height:150px;border-radius:13px 13px 6px 6px;background:linear-gradient(var(--ac),var(--surf2));margin:0 auto;cursor:pointer;box-shadow:0 0 0 1px var(--line)}
+.stick.on{box-shadow:0 0 30px 10px var(--ac),0 0 80px 30px color-mix(in srgb,var(--ac) 50%,transparent)}
+.pc{aspect-ratio:2/3;border-radius:12px;padding:8px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;border:1px solid rgba(255,255,255,.25);overflow:hidden;position:relative}
+.pc b{font-family:var(--f-d);font-size:1.5rem;font-weight:400;line-height:1}
+.pc.leg{box-shadow:0 0 18px 2px var(--warn)}
+.bar{height:8px;border-radius:99px;background:var(--surf2);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--pk))}
+.sk{background:linear-gradient(90deg,var(--surf2),var(--surf),var(--surf2));background-size:200% 100%;animation:sh 1.4s infinite;border-radius:10px;height:14px}
+@keyframes sh{to{background-position:-200% 0}}
+.hide{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body.calm *{animation:none!important;transition:none!important}
+body.locked .nav,body.locked .side{display:none!important}
+body.locked .app{grid-template-columns:1fr}
+.btn{touch-action:manipulation}
+.bar i{transition:width .8s}
+
+/* ---- gift edition ---- */
+.cardmsg{border:1px solid var(--pk)!important;box-shadow:0 0 18px color-mix(in srgb,var(--pk) 35%,transparent)}
+.cd{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cd>div{min-width:64px;background:var(--surf2);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+.cd b{display:block;font-family:var(--f-d);font-size:1.8rem;font-weight:400;font-variant-numeric:tabular-nums}
+.cd span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .3s infinite alternate;transition:opacity .5s}
+@keyframes flick{to{transform:scale(1.12,.92) rotate(2deg)}}
+.out .flame{opacity:0;animation:none}
+.scrs{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.scr{position:relative;border-radius:16px;overflow:hidden;min-height:132px;background:var(--surf);border:1px solid var(--line);display:grid;place-items:center;padding:16px 12px;text-align:center}
+.scr canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:0}
+.scr .n{position:absolute;top:6px;left:10px;font-size:.66rem;color:var(--mut)}
+.story{position:relative;aspect-ratio:9/13;max-height:62vh;width:100%;border-radius:20px;overflow:hidden;background:#05030A;border:1px solid var(--line);display:flex;align-items:flex-end}
+.story .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;animation:kb 7s ease-out forwards}
+.story.paused .bgimg{animation:none}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.12)}}
+.story .cap{position:relative;z-index:2;width:100%;padding:70px 18px 22px;background:linear-gradient(transparent,rgba(5,3,10,.9));color:#fff}
+.segs{display:flex;gap:4px;position:absolute;top:10px;left:10px;right:10px;z-index:3}
+.segs i{flex:1;height:3px;border-radius:9px;background:rgba(255,255,255,.3);overflow:hidden}
+.segs i b{display:block;height:100%;width:0;background:#fff}
+.segs i.done b{width:100%}
+.segs i.cur b{animation:seg 5s linear forwards}
+@keyframes seg{to{width:100%}}
+.hsky{position:relative;height:340px;border-radius:18px;border:1px solid var(--line);cursor:crosshair;overflow:hidden;background:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 70% 20%,#fff,transparent),radial-gradient(1px 1px at 40% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 65%,#fff,transparent),radial-gradient(1px 1px at 10% 85%,#fff,transparent),radial-gradient(1px 1px at 55% 45%,#fff,transparent),radial-gradient(40rem 20rem at 60% 40%,rgba(155,92,255,.3),transparent 60%),#05030A}
+.shake{animation:shk .4s}
+@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+</style>
+
+</head><body>
+<div class="splash" id="splash"><div class="col" style="align-items:center"><svg viewBox="0 0 24 24"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9B5CFF"/><stop offset="1" stop-color="#FF6FAE"/></linearGradient></defs><path fill="url(#hg)" d="M12 21s-7.5-4.6-9.6-9.2C.8 8.3 3 4.5 6.6 4.5c2 0 3.5 1.1 5.4 3 1.9-1.9 3.4-3 5.4-3 3.6 0 5.8 3.8 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg><div class="brand" style="font-size:2rem">BuBu</div><div id="spname" class="mut"></div></div></div>
+
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main class="view" id="view" aria-live="polite"></main>
+</div>
+<nav class="nav" id="nav" aria-label="Main"></nav>
+<div id="layer"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,r){return (r||document).querySelector(s)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
+var pick=function(a){return a[Math.floor(Math.random()*a.length)]};
+var KEY='bubu_v1';
+var DAY=864e5;
+
+/* ---------- data ---------- */
+var HEART='M12 21s-7.5-4.6-9.6-9.2C.8 8.3 3 4.5 6.6 4.5c2 0 3.5 1.1 5.4 3 1.9-1.9 3.4-3 5.4-3 3.6 0 5.8 3.8 4.2 7.3C19.5 16.4 12 21 12 21z';
+var IC={home:'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',chat:'M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.2A8 8 0 1 1 21 12z',world:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',play:'M6 12h4M8 10v4M15 13h.01M18 11h.01M17.3 5H6.7a4 4 0 0 0-3.9 3.2l-1.3 7A3 3 0 0 0 4.5 19c1 0 1.8-.5 2.4-1.3L8 16h8l1.1 1.7c.6.8 1.4 1.3 2.4 1.3a3 3 0 0 0 3-3.8l-1.3-7A4 4 0 0 0 17.3 5z',user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'};
+var NAV=[['home','HOME'],['chat','CHAT'],['world','OUR WORLD'],['play','PLAY'],['user','PROFILE']];
+var QUESTIONS=['What small thing I did this week made you smile?','Where do you want us to be in five years?','What is a memory of us you replay the most?','What song reminds you of me right now?','What is one thing you want to try together this year?','When did you first realise you liked me?','What is your favourite ordinary moment with me?','What do you need more of from me this week?','Which meal would you pick for our next date?','What is one fear you want to share with me?','What made you laugh the hardest with me?','If we had a free weekend, what would we do?','What is a habit of mine you secretly love?','What would you tell us on our first day?'];
+var LOVE=['I am glad it is you.','Every plan looks better with you in it.','You make ordinary days feel chosen.','Thinking of you, as usual.','Proud of you today. Always.','Home is wherever you are.','You are my favourite notification.','Still choosing you.'];
+var COMPL=['You have the kindest laugh.','You make hard days lighter.','You are braver than you think.','Your voice is my favourite sound.','You make me want to be better.','I love how you care about small things.'];
+var DATES=['Cook a new recipe together on a video call','Sunset walk, no phones','Build a playlist of 10 songs for each other','Late-night snacks and a movie marathon','Recreate our first date','Write letters to each other and swap them','Visit a place neither of us has been','Stargazing with hot chocolate'];
+var TRUTH=['What was your first impression of me?','What is something you have never told me?','What is your most embarrassing moment?','What do you miss most when we are apart?','What is a dream you have been hiding?'];
+var DARE=['Send me a voice note singing your favourite song','Write me a four-line poem right now','Do your best dance move on video','Draw my portrait in 30 seconds','Tell me three things you love about me'];
+var WYR=[['Beach holiday','Mountain cabin'],['Movie night in','Concert out'],['Sunrise together','Sunset together'],['Cook together','Order in'],['Road trip','Flight to somewhere new'],['Surprise party','Quiet dinner'],['Handwritten letters','Voice notes'],['Rainy day indoors','Snowy day outside'],['Karaoke night','Dance class']];
+var WHEEL=['Compliment battle','Slow dance','Share a secret','Plan a trip','Voice note','Doodle each other','Dream-house sketch','Photo recreate'];
+var MOODS=[['😊','Happy'],['🥰','Loved'],['😌','Calm'],['😴','Tired'],['😟','Anxious'],['😢','Sad'],['😤','Stressed'],['💜','Borahae']];
+var DAILYGOAL=['Send one voice note','Share one photo','Write one gratitude','Plan something small'];
+var MEMBERS=[
+ {n:'RM',role:'Leader · rapper',m:9,d:12,y:1994,c:'#8B5CF6'},
+ {n:'Jin',role:'Vocalist',m:12,d:4,y:1992,c:'#C084FC'},
+ {n:'Suga',role:'Rapper',m:3,d:9,y:1993,c:'#7C6BFF'},
+ {n:'J-Hope',role:'Main dancer · rapper',m:2,d:18,y:1994,c:'#E879F9'},
+ {n:'Jimin',role:'Main dancer · vocalist',m:10,d:13,y:1995,c:'#A78BFA'},
+ {n:'V',role:'Vocalist',m:12,d:30,y:1995,c:'#9333EA'},
+ {n:'Jungkook',role:'Main vocalist',m:9,d:1,y:1997,c:'#D946EF'}];
+var BTSDATES=[{t:'BTS debut anniversary',m:6,d:13},{t:'ARMY anniversary',m:7,d:9}];
+var SONGS=[['Dynamite','BTS'],['Butter','BTS'],['Spring Day','BTS'],['Euphoria','Jungkook'],['Serendipity','Jimin'],['Fake Love','BTS'],['Boy With Luv','BTS'],['Life Goes On','BTS'],['Permission to Dance','BTS'],['Blood Sweat & Tears','BTS']];
+var BQ=[
+ ['Which fandom name do BTS fans use?',['ARMY','BLINK','CARAT','ONCE'],0],
+ ['In which year did BTS debut?',['2011','2013','2015','2017'],1],
+ ['How many members are in BTS?',['5','6','7','9'],2],
+ ['Who is the eldest member?',['Suga','RM','Jin','J-Hope'],2],
+ ['Who is the youngest member (maknae)?',['Jimin','V','Jungkook','Jin'],2],
+ ['Who is the group leader?',['RM','Suga','Jimin','V'],0],
+ ['Which agency debuted BTS (now part of HYBE)?',['SM','JYP','Big Hit Entertainment','YG'],2],
+ ['What does the word Borahae mean?',['I miss you','I purple you','Good morning','Stay with me'],1],
+ ['Which BTS single was their first all-English release?',['Butter','Dynamite','Fake Love','Spring Day'],1],
+ ['Which debut single came from the album 2 Cool 4 Skool?',['No More Dream','DNA','Run','Blood Sweat & Tears'],0]];
+var ACCS=[['bow','Bow',5],['glasses','Glasses',10],['crown','Crown',15],['phones','Purple headphones',20]];
+var RARE=[['Common',70,'#5b4b8a'],['Rare',25,'#8a3fc4'],['Legendary',5,'#c47a1d']];
+
+function def(){return{names:{a:'Me',b:'Her'},me:'a',since:'',theme:'dark',accent:'#9B5CFF',army:false,font:100,calm:false,sound:true,wall:'night',frame:true,quiet:{on:false,from:'23:00',to:'07:00'},
+ notif:{msg:true,letters:true,events:true,mood:true},
+ msgs:[],sched:[],mem:[],miles:[],letters:[],events:[],tasks:[],bucket:[],moods:[],journal:[],tracks:[],jar:[],caps:[],stars:[],checkins:{},grat:[],
+ pet:{name:'Bubu',fed:Date.now(),played:Date.now(),acc:[],on:[],coins:0},score:{a:0,b:0},wyr:{},bias:{a:'',b:''},cards:[],btsBest:0,custDate:{t:'',d:''},stick:'#9B5CFF',
+ widgets:{people:1,counter:1,question:1,mood:1,sky:1,army:1,stats:1},gift:giftDef(),dis:0,tz:{a:'Asia/Kolkata',b:'Asia/Kolkata'},bd:{a:'',b:''},pin:null,sync:null,q:[],lastBackup:0,pt:0,auth:{owner:null,partner:null,invite:null,session:null,log:[],fails:0,lockUntil:0},page:'home',sub:''}}
+function load(){var d=def();try{var r=localStorage.getItem(KEY)||localStorage.getItem('dudu_v1');if(r){var o=JSON.parse(r);for(var k in o)d[k]=o[k]}}catch(e){}return d}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Storage is full. Remove some photos to keep saving.')}}
+
+/* ---------- helpers ---------- */
+function toast(t){var el=document.createElement('div');el.className='toast';el.textContent=t;$('#layer').appendChild(el);setTimeout(function(){el.remove()},2600)}
+function hearts(e){var n=e||8;for(var i=0;i<n;i++){var h=document.createElement('div');h.className='fl';h.textContent=pick(['💜','💗','💖','✨','💞']);h.style.left=Math.random()*92+'vw';h.style.animationDelay=(Math.random()*.8)+'s';document.body.appendChild(h);setTimeout(function(x){x.remove()}.bind(null,h),4200)}}
+function ding(){if(!S.sound)return;try{var a=new (window.AudioContext||window.webkitAudioContext)();var o=a.createOscillator(),g=a.createGain();o.frequency.value=740;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.25);o.start();o.stop(a.currentTime+.26)}catch(e){}}
+function nm(k){return S.names[k]||k}
+function other(){return S.me==='a'?'b':'a'}
+function fmtDate(t){return new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function fmtTime(t){return new Date(t).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}
+function dayKey(t){var d=new Date(t||Date.now());return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function daysUntil(iso){var t=new Date(iso+'T00:00:00').getTime();return Math.ceil((t-new Date().setHours(0,0,0,0))/DAY)}
+function nextAnnual(m,d){var n=new Date(),y=n.getFullYear();var t=new Date(y,m-1,d);if(t<new Date(n.getFullYear(),n.getMonth(),n.getDate()))t=new Date(y+1,m-1,d);return Math.round((t-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/DAY)}
+function dayIdx(){return Math.floor(Date.now()/DAY)}
+function modal(html){var m=document.createElement('div');m.className='modal';m.innerHTML='<div class="card glow">'+html+'</div>';m.addEventListener('click',function(e){if(e.target===m)m.remove()});$('#layer').appendChild(m);return m}
+function confirmBox(msg,yes){var m=modal('<h3>Are you sure?</h3><p class="mut">'+esc(msg)+'</p><div class="row"><button class="btn pri" id="cy">Yes, continue</button><button class="btn" id="cn">Cancel</button></div>');$('#cy',m).onclick=function(){m.remove();yes()};$('#cn',m).onclick=function(){m.remove()}}
+function shrink(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,520/Math.max(im.width,im.height));var c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.7))};im.onerror=function(){toast('That file is not a readable image.')};im.src=r.result};r.readAsDataURL(file)}
+function v(id){var e=document.getElementById(id);return e?e.value.trim():''}
+function stars(){return S.stars.length}
+function addStar(name){S.stars.push({id:uid(),n:name,x:Math.random(),y:Math.random(),t:Date.now()})}
+function earn(n){S.pet.coins+=n}
+function av(k,sm){var f=S.frame?' fr':'';return '<div class="av'+f+'" style="'+(sm?'width:38px;height:38px;font-size:1rem':'')+'">'+esc((nm(k)||'?').charAt(0).toUpperCase())+'</div>'}
+function empty(t,s){return '<div class="empty"><b>'+esc(t)+'</b><div class="mut">'+esc(s||'')+'</div></div>'}
+function back(){return '<div class="row"><button class="btn sm" data-a="sub" data-v="">‹ Our World</button></div>'}
+
+/* ---------- pages ---------- */
+var P={};
+var chatSel=null,chatReply=null,chatQ='';
+
+P.home=function(){
+  var W=S.widgets,out=[];
+  var head='<div class="row sb"><div><h1>Our Universe</h1><p class="mut">'+new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})+'</p></div><button class="btn pri" data-a="surprise">Surprise me</button></div>';
+  if(W.people)out.push('<div class="card glow"><div class="row sb"><div class="row">'+av('a')+'<div><b>'+esc(nm('a'))+'</b><div class="mut">'+(S.me==='a'?'You, on this device':'Partner')+'</div></div></div><svg width="28" height="28" viewBox="0 0 24 24" style="filter:drop-shadow(0 0 6px var(--pk))"><path fill="var(--pk)" d="'+HEART+'"/></svg><div class="row" style="flex-direction:row-reverse">'+av('b')+'<div style="text-align:right"><b>'+esc(nm('b'))+'</b><div class="mut">'+(S.me==='b'?'You, on this device':'Partner')+'</div></div></div></div><div class="row"><span class="pill demo">Demo mode · saved on this device only</span><span class="pill">Online status needs the live backend</span></div></div>');
+  if(W.counter){var c='';if(S.since){var d=Math.floor((Date.now()-new Date(S.since+'T00:00:00'))/DAY);var ann=nextAnnual(+S.since.slice(5,7),+S.since.slice(8,10));c='<div class="row" style="gap:24px"><div><div class="big">'+Math.max(d,0)+'</div><div class="lab">days together</div></div><div><div class="big">'+ann+'</div><div class="lab">days to anniversary</div></div></div>'}else c='<div class="row"><label class="f" style="flex:1">Date your story began<input type="date" id="since"></label><button class="btn pri" data-a="setSince">Start counting</button></div>';
+    out.push('<div class="card"><div class="lab">Relationship counter</div>'+c+'</div>')}
+  var q=QUESTIONS[dayIdx()%QUESTIONS.length],lm=LOVE[dayIdx()%LOVE.length];
+  if(W.question)out.push('<div class="card"><div class="lab">Daily question</div><h3>'+esc(q)+'</h3><div class="mut">'+esc(lm)+'</div><div class="row"><button class="btn sm" data-a="askChat">Send to chat</button><button class="btn sm" data-a="grat">Write a gratitude</button></div></div>');
+  if(W.mood){var tm=S.moods.filter(function(m){return dayKey(m.t)===dayKey()});var chk=S.checkins[dayKey()]||[];
+    out.push('<div class="card"><div class="lab">Today\'s mood</div>'+(tm.length?'<div class="row">'+tm.map(function(m){return '<span class="pill on">'+m.e+' '+esc(nm(m.by))+': '+esc(m.l)+'</span>'}).join('')+'</div>':'<div class="mut">Nobody has checked in yet.</div>')+'<div class="row"><button class="btn sm" data-a="go" data-p="world" data-v="mood">Check in</button><span class="pill">Streak '+streak()+' day'+(streak()===1?'':'s')+'</span></div></div>')}
+  if(W.sky)out.push('<div class="card"><div class="row sb"><div class="lab">Our night sky</div><span class="mut">'+stars()+' milestone star'+(stars()===1?'':'s')+'</span></div><canvas class="sky" id="skyH" width="640" height="220"></canvas></div>');
+  if(W.army){var nx=nextBirthday();out.push('<div class="card" style="border-color:var(--ac)"><div class="lab">ARMY corner</div><div class="row sb"><div><b>'+esc(nx.n)+'\'s birthday</b><div class="mut">'+nx.days+' day'+(nx.days===1?'':'s')+' away</div></div><button class="btn sm" data-a="go" data-p="world" data-v="army">Open ARMY Zone</button></div></div>')}
+  if(W.stats){var unread=S.msgs.filter(function(m){return m.from!==S.me&&!m.seen}).length,lock=S.letters.filter(function(l){return l.to!==S.me&&!l.opened}).length;
+    out.push('<div class="grid sm"><div class="card"><div class="big">'+S.msgs.length+'</div><div class="lab">messages</div></div><div class="card"><div class="big">'+S.mem.length+'</div><div class="lab">memories</div></div><div class="card"><div class="big">'+S.letters.length+'</div><div class="lab">letters</div></div><div class="card"><div class="big">'+unread+'</div><div class="lab">unread</div></div></div>')}
+  var up=upcoming().slice(0,3);
+  out.push('<div class="card"><div class="lab">Coming up</div>'+(up.length?'<div class="list">'+up.map(function(e){return '<div class="item"><div><b>'+esc(e.t)+'</b></div><span class="chip">'+(e.days===0?'today':e.days+' d')+'</span></div>'}).join('')+'</div>':empty('Nothing planned yet','Add events in Our World, Calendar.'))+'</div>');
+  if(!S.auth.partner&&S.me==='a')out.unshift('<div class="card glow"><b>Invite your partner</b><p class="mut">Create a one-time code. She joins with it and the space locks to two people.</p><button class="btn pri" data-a="go" data-p="profile">Create invite</button></div>');
+  return head+'<div class="grid">'+out.join('')+'</div>'
+};
+function streak(){var n=0,t=Date.now();while(S.checkins[dayKey(t)]&&S.checkins[dayKey(t)].length){n++;t-=DAY}return n}
+function nextBirthday(){var best=null;MEMBERS.forEach(function(m){var d=nextAnnual(m.m,m.d);if(!best||d<best.days)best={n:m.n,days:d}});return best}
+function upcoming(){var L=[];S.events.forEach(function(e){var d=daysUntil(e.d);if(d>=0)L.push({t:e.t,days:d})});if(S.since)L.push({t:'Anniversary',days:nextAnnual(+S.since.slice(5,7),+S.since.slice(8,10))});if(S.custDate.d){var d2=daysUntil(S.custDate.d);if(d2>=0)L.push({t:S.custDate.t||'Custom date',days:d2})}['a','b'].forEach(function(k){if(S.bd&&S.bd[k]){var dd=nextAnnual(+S.bd[k].slice(5,7),+S.bd[k].slice(8,10));L.push({t:nm(k)+"'s birthday",days:dd})}});var gd=daysUntil(S.gift.unlock);if(gd>=0)L.push({t:'Birthday gift opens',days:gd});return L.sort(function(a,b){return a.days-b.days})}
+
+/* chat */
+function bubbles(){
+  purge();var L=S.msgs.slice().sort(function(a,b){return a.t-b.t});
+  if(chatQ)L=L.filter(function(m){return (m.text||'').toLowerCase().indexOf(chatQ.toLowerCase())>-1});
+  if(!L.length)return empty(chatQ?'No match':'No messages yet','Messages you send are saved on this device. Real-time delivery needs the Supabase backend.');
+  var h='',last='';
+  L.forEach(function(m){var dk=dayKey(m.t);if(dk!==last){h+='<div class="sep">'+fmtDate(m.t)+'</div>';last=dk}
+    var mine=m.from===S.me,rp=m.reply&&S.msgs.filter(function(x){return x.id===m.reply})[0];
+    h+='<div class="bub '+(mine?'me':'her')+(m.card?' cardmsg':'')+'" data-a="sel" data-id="'+m.id+'">'+(rp?'<div class="rp">'+esc((rp.text||'photo').slice(0,60))+'</div>':'')+(m.img?'<img src="'+mu(m.img)+'" alt="Attached photo">':'')+(m.aud?'<audio controls preload="none" src="'+mu(m.aud)+'" style="max-width:220px;height:38px"></audio>':'')+esc(m.text||'')+'<div class="meta">'+(m.pin?'<span>pinned</span>':'')+(m.edited?'<span>edited</span>':'')+'<span>'+fmtTime(m.t)+'</span>'+(mine?'<span>'+(syncOn()?'sent':'saved')+'</span>':'')+'</div>'+(m.rx?'<span class="rx">'+m.rx+'</span>':'')+'</div>';
+    if(chatSel===m.id){h+='<div class="row" style="justify-content:'+(mine?'flex-end':'flex-start')+'"><button class="btn sm" data-a="reply" data-id="'+m.id+'">Reply</button>'+['❤️','😂','😮','👍'].map(function(e){return '<button class="btn sm" data-a="react" data-id="'+m.id+'" data-e="'+e+'">'+e+'</button>'}).join('')+'<button class="btn sm" data-a="pin" data-id="'+m.id+'">'+(m.pin?'Unpin':'Pin')+'</button><button class="btn sm" data-a="copy" data-id="'+m.id+'">Copy</button>'+(mine?'<button class="btn sm" data-a="edit" data-id="'+m.id+'">Edit</button><button class="btn sm" data-a="del" data-id="'+m.id+'">Delete</button>':'')+'</div>'}
+  });return h
+}
+P.chat=function(){
+  S.msgs.forEach(function(m){if(m.from!==S.me)m.seen=1});
+  var pins=S.msgs.filter(function(m){return m.pin});
+  return '<div class="row sb"><h1>Chat</h1><div class="row"><span class="pill'+(syncOn()?' on':' demo')+'" id="syncpill">'+syncLabel()+'</span></div></div>'+
+  '<div class="card"><div class="row sb"><div class="row">'+av(other(),1)+'<div><b>'+esc(nm(other()))+'</b><div class="mut" id="peer">'+esc(peerTxt())+'</div></div></div><div class="row"><span class="mut">Signed in as <b>'+esc(nm(S.me))+'</b></span><button class="btn sm" data-a="logout">Switch</button></div></div>'+
+  '<input id="csearch" placeholder="Search messages" value="'+esc(chatQ)+'">'+
+  (pins.length?'<div class="item"><div><span class="lab">Pinned</span><br>'+esc((pins[pins.length-1].text||'photo').slice(0,90))+'</div></div>':'')+
+  '<div class="chat wall-'+S.wall+'" id="msgs">'+bubbles()+'</div>'+
+  (chatReply?'<div class="item"><div class="mut">Replying to: '+esc(((S.msgs.filter(function(x){return x.id===chatReply})[0]||{}).text||'photo').slice(0,50))+'</div><button class="btn sm" data-a="cancelReply">✕</button></div>':'')+
+  '<div class="row" style="flex-wrap:nowrap"><label class="btn" style="cursor:pointer">📷<input type="file" id="cimg" accept="image/*" class="hide"></label><input id="ctext" placeholder="Write a message" autocomplete="off"><button class="btn pri" data-a="send">Send</button></div>'+
+  '<div class="row"><button class="btn sm" id="recbtn" data-a="rec">\uD83C\uDF99 Voice note</button><button class="btn sm" data-a="buzz">\uD83D\uDCF3 Miss-you buzz</button><button class="btn sm" data-a="gm">\u2600\uFE0F Good morning</button><button class="btn sm" data-a="gn">\uD83C\uDF19 Good night</button></div><div class="row"><label class="row mut">Disappearing messages <select id="dis" style="width:auto"><option value="0"'+(!S.dis?' selected':'')+'>Off</option><option value="60"'+(S.dis===60?' selected':'')+'>1 minute</option><option value="3600"'+(S.dis===3600?' selected':'')+'>1 hour</option><option value="86400"'+(S.dis===86400?' selected':'')+'>1 day</option></select></label></div><div class="row"><button class="btn sm" data-a="stick">Send a hug</button><button class="btn sm" data-a="mood2">Send I miss you</button><button class="btn sm" data-a="borahae">Borahae 💜</button><button class="btn sm" data-a="exportChat">Copy chat export</button></div></div>'+
+  '<div class="card"><div class="lab">Schedule a message</div><div class="row" style="flex-wrap:nowrap"><input id="stext" placeholder="Message"><input id="swhen" type="datetime-local" style="max-width:210px"></div><button class="btn" data-a="schedule">Schedule</button>'+
+  (S.sched.length?'<div class="list">'+S.sched.map(function(s){return '<div class="item"><div>'+esc(s.text)+'<div class="mut">'+new Date(s.at).toLocaleString()+'</div></div><button class="btn sm" data-a="unsched" data-id="'+s.id+'">Cancel</button></div>'}).join('')+'</div>':'')+
+  '<p class="mut">Scheduled messages send while this page is open. Voice notes, voice calls, translation and smart replies need extra services (see Profile, Build status).</p></div>'
+};
+
+/* our world */
+var WORLD=[['memories','Memories','Photos, albums, tags'],['story','Storybook','Timeline and chapters'],['letters','Love letters','Time-locked letters'],['plans','Plans','Calendar, tasks, bucket list'],['mood','Mood and journal','Check-ins, gratitude'],['music','Music and watch','Playlists, dedications'],['pet','Virtual pet','Feed, play, dress'],['capsule','Time capsule','Open on a future date'],['jar','Love jar','Compliments and notes'],['universe','Our galaxy','Stars you earned'],['doodle','Doodle board','Draw together'],['army','ARMY Zone','BTS extras 💜'],['calls','Calls','Voice and video'],['security','Security','Devices and privacy']];
+P.world=function(){
+  if(S.sub&&SUB[S.sub])return back()+SUB[S.sub]();
+  return '<h1>Our World</h1><div class="grid sm">'+WORLD.map(function(w){return '<button class="card" style="text-align:left;cursor:pointer;color:inherit;border-radius:18px" data-a="sub" data-v="'+w[0]+'"><h3>'+w[1]+'</h3><span class="mut">'+w[2]+'</span></button>'}).join('')+'</div>'
+};
+var SUB={};
+var memQ='',memFav=false;
+SUB.memories=function(){
+  var L=S.mem.filter(function(m){return (!memFav||m.fav)&&(!memQ||(m.cap+' '+m.tag).toLowerCase().indexOf(memQ.toLowerCase())>-1)}).sort(function(a,b){return b.d.localeCompare(a.d)});
+  var otd=S.mem.filter(function(m){return m.d.slice(5)===new Date().toISOString().slice(5,10)&&m.d.slice(0,4)!==String(new Date().getFullYear())});
+  return '<h2>Memories</h2>'+(otd.length?'<div class="card glow"><div class="lab">On this day</div>'+otd.map(function(m){return '<div>'+esc(m.cap)+' · '+m.d.slice(0,4)+'</div>'}).join('')+'</div>':'')+
+  '<div class="card"><div class="lab">Add a memory</div><label class="f">Caption<input id="mcap"></label><div class="row"><label class="f" style="flex:1">Date<input type="date" id="mdate" value="'+new Date().toISOString().slice(0,10)+'"></label><label class="f" style="flex:1">Tag or album<input id="mtag" placeholder="trip, birthday"></label></div><label class="f">Photo (optional)<input type="file" id="mimg" accept="image/*"></label><button class="btn pri" data-a="addMem">Save memory</button></div>'+
+  '<div class="row"><input id="mq" placeholder="Search captions and tags" value="'+esc(memQ)+'" style="flex:1"><button class="btn'+(memFav?' pri':'')+'" data-a="favOnly">Favourites</button></div>'+
+  (L.length?'<div class="grid">'+L.map(function(m){return '<div class="card">'+(m.img?'<img src="'+mu(m.img)+'" alt="'+esc(m.cap)+'" style="border-radius:12px">':'')+'<div class="row sb"><b>'+esc(m.cap)+'</b><button class="btn sm ghost" data-a="favMem" data-id="'+m.id+'">'+(m.fav?'♥':'♡')+'</button></div><div class="row"><span class="chip">'+fmtDate(m.d)+'</span>'+(m.tag?'<span class="chip">'+esc(m.tag)+'</span>':'')+'<button class="btn sm ghost" data-a="delMem" data-id="'+m.id+'">Remove</button></div></div>'}).join('')+'</div>':empty('No memories yet','Add your first photo or moment above.'))
+};
+SUB.story=function(){
+  var L=S.miles.slice().sort(function(a,b){return a.d.localeCompare(b.d)});
+  return '<h2>Our Storybook</h2><div class="card"><div class="row"><label class="f" style="flex:2">Milestone<input id="mltitle" placeholder="First date, first trip"></label><label class="f" style="flex:1">Date<input type="date" id="mldate"></label></div><label class="f">Chapter note<textarea id="mlnote"></textarea></label><button class="btn pri" data-a="addMile">Add to timeline</button></div>'+
+  (L.length?'<div class="list">'+L.map(function(m){return '<div class="item"><div><span class="chip">'+fmtDate(m.d)+'</span><br><b>'+esc(m.t)+'</b><div class="mut">'+esc(m.n)+'</div></div><button class="btn sm ghost" data-a="delMile" data-id="'+m.id+'">Remove</button></div>'}).join('')+'</div><div class="card"><div class="lab">Yearly recap</div><p>'+(function(){var y=new Date().getFullYear();return S.miles.filter(function(m){return m.d.slice(0,4)==y}).length+' milestones, '+S.mem.filter(function(m){return m.d.slice(0,4)==y}).length+' memories and '+S.letters.length+' letters in '+y+'.'})()+'</p></div>':empty('Your timeline is empty','Milestones become stars in your galaxy.'))
+};
+SUB.letters=function(){
+  var L=S.letters.slice().sort(function(a,b){return b.t-a.t});
+  return '<h2>Love letters</h2><div class="card"><div class="row"><label class="f" style="flex:1">Type<select id="ltype"><option value="letter">Love letter</option><option value="future">Future-self letter</option></select></label><label class="f" style="flex:1">Opens on (optional)<input type="date" id="lopen"></label></div><label class="f">Title<input id="ltitle"></label><label class="f">Letter<textarea id="lbody" style="min-height:120px"></textarea></label><button class="btn pri" data-a="addLetter">Seal letter</button></div>'+
+  (L.length?'<div class="list">'+L.map(function(l){var locked=l.open&&daysUntil(l.open)>0,mine=l.from===S.me;return '<div class="item"><div><b>'+esc(l.title||'Untitled')+'</b> <span class="chip">'+(l.type==='future'?'future self':'from '+esc(nm(l.from)))+'</span>'+(l.opened&&!locked?'<div class="letter-open" style="margin-top:8px;white-space:pre-wrap">'+esc(l.body)+'</div>':'<div class="mut">'+(locked?'Locked until '+fmtDate(l.open)+' ('+daysUntil(l.open)+' days)':'Sealed')+'</div>')+'</div>'+(locked?'':'<button class="btn sm" data-a="openLetter" data-id="'+l.id+'">'+(l.opened?'Close':'Open')+'</button>')+'</div>'}).join('')+'</div>':empty('No letters yet','Write one and seal it for later.'))
+};
+SUB.plans=function(){
+  var ev=S.events.slice().sort(function(a,b){return a.d.localeCompare(b.d)});
+  return '<h2>Plans</h2><div class="card"><div class="lab">Calendar and countdowns</div><div class="row"><input id="et" placeholder="Date night, birthday, trip" style="flex:2"><input id="ed" type="date" style="flex:1"></div><button class="btn pri" data-a="addEv">Add event</button>'+
+  (ev.length?'<div class="list">'+ev.map(function(e){var d=daysUntil(e.d);return '<div class="item"><div><b>'+esc(e.t)+'</b><div class="mut">'+fmtDate(e.d)+'</div></div><div class="row"><span class="chip">'+(d<0?'past':d===0?'today':d+' d')+'</span><button class="btn sm ghost" data-a="delEv" data-id="'+e.id+'">✕</button></div></div>'}).join('')+'</div>':empty('No events','Add something to look forward to.'))+'</div>'+
+  '<div class="grid"><div class="card"><div class="lab">Shared to-do</div><div class="row"><input id="tk" placeholder="Task"><button class="btn" data-a="addTk">Add</button></div>'+listChk(S.tasks,'Tk')+'</div><div class="card"><div class="lab">Bucket list</div><div class="row"><input id="bk" placeholder="Dream or destination"><button class="btn" data-a="addBk">Add</button></div>'+listChk(S.bucket,'Bk')+'</div></div>'+
+  '<div class="card"><div class="lab">Random date generator</div><div id="dateidea" class="mut">Tap for an idea.</div><button class="btn" data-a="dateIdea">Pick a date idea</button></div>'
+};
+function listChk(L,k){return L.length?'<div class="list">'+L.map(function(i){return '<div class="item"><label class="row" style="flex-wrap:nowrap"><input type="checkbox" data-a="chk'+k+'" data-id="'+i.id+'" '+(i.done?'checked':'')+'><span style="'+(i.done?'text-decoration:line-through;opacity:.6':'')+'">'+esc(i.t)+'</span></label><button class="btn sm ghost" data-a="del'+k+'" data-id="'+i.id+'">✕</button></div>'}).join('')+'</div>':empty('Nothing here yet')}
+SUB.mood=function(){
+  var tm=S.moods.slice(-8).reverse(),J=S.journal.filter(function(j){return j.shared||j.by===S.me}).slice().reverse();
+  return '<h2>Mood and journal</h2><div class="card"><div class="lab">How are you, '+esc(nm(S.me))+'?</div><div class="row">'+MOODS.map(function(m,i){return '<button class="btn" data-a="mood" data-i="'+i+'">'+m[0]+' '+m[1]+'</button>'}).join('')+'</div><input id="mnote" placeholder="Add a note (optional)"></div>'+
+  '<div class="card"><div class="lab">Mood history</div>'+(tm.length?'<div class="list">'+tm.map(function(m){return '<div class="item"><div>'+m.e+' <b>'+esc(nm(m.by))+'</b> '+esc(m.l)+(m.note?'<div class="mut">'+esc(m.note)+'</div>':'')+'</div><span class="chip">'+fmtDate(m.t)+'</span></div>'}).join('')+'</div>':empty('No check-ins yet'))+'</div>'+
+  '<div class="card"><div class="lab">Journal</div><textarea id="jtext" placeholder="Private by default. Only the writer sees it unless shared."></textarea><div class="row"><label class="row"><input type="checkbox" id="jshare"> Share with '+esc(nm(other()))+'</label><button class="btn pri" data-a="addJ">Save entry</button></div>'+
+  (J.length?'<div class="list">'+J.map(function(j){return '<div class="item"><div>'+esc(j.text)+'<div class="mut">'+esc(nm(j.by))+' · '+fmtDate(j.t)+' · '+(j.shared?'shared':'private')+'</div></div><button class="btn sm ghost" data-a="delJ" data-id="'+j.id+'">✕</button></div>'}).join('')+'</div>':'')+'<p class="mut">On this single-device demo, privacy is a filter on who you are writing as. Real privacy comes from Row Level Security in the backend.</p></div>'+
+  '<div class="card"><div class="lab">Gratitude</div><div class="row"><input id="gtext" placeholder="Today I am grateful for..."><button class="btn" data-a="addG">Add</button></div>'+(S.grat.length?'<div class="list">'+S.grat.slice(-5).reverse().map(function(g){return '<div class="item"><div>'+esc(g.text)+'<div class="mut">'+esc(nm(g.by))+'</div></div></div>'}).join('')+'</div>':'')+'</div>'
+};
+SUB.music=function(){
+  return '<h2>Music and watch</h2><div class="card"><div class="lab">Shared playlist</div><div class="row"><input id="ttitle" placeholder="Song" style="flex:2"><input id="tartist" placeholder="Artist" style="flex:1"></div><input id="tlink" placeholder="Link (optional)"><input id="tded" placeholder="Dedication (optional)"><button class="btn pri" data-a="addTrack">Add song</button>'+
+  (S.tracks.length?'<div class="list">'+S.tracks.map(function(t){return '<div class="item"><div><b>'+esc(t.title)+'</b> · '+esc(t.artist)+(t.ded?'<div class="mut">For '+esc(nm(other()===t.by?S.me:other()))+': '+esc(t.ded)+'</div>':'')+(/^https?:\/\//.test(t.link)?'<div><a href="'+esc(t.link)+'" target="_blank" rel="noopener">Open link</a></div>':'')+'<div class="mut">Added by '+esc(nm(t.by))+'</div></div><div class="row"><button class="btn sm ghost" data-a="favTrack" data-id="'+t.id+'">'+(t.fav?'♥':'♡')+'</button><button class="btn sm ghost" data-a="delTrack" data-id="'+t.id+'">✕</button></div></div>'}).join('')+'</div>':empty('Playlist is empty','Add a song and dedicate it.'))+'<button class="btn" data-a="recSong">Recommend a song</button><div id="rec" class="mut"></div></div>'+
+  '<div class="card"><div class="lab">Watch together</div><p class="mut">Other sites cannot be embedded here, so paste a link and open it in a tab. Synchronised play, pause and seek need the realtime backend and a licensed player.</p><div class="row"><input id="wurl" placeholder="https://..." style="flex:1"><button class="btn" data-a="watch">Open</button></div><div id="wout"></div></div>'
+};
+function petHappy(){var h=(Date.now()-S.pet.fed)/36e5,p=(Date.now()-S.pet.played)/36e5;return Math.max(0,Math.min(100,Math.round(100-h*5-p*4)))}
+function petSvg(){var h=petHappy(),on=S.pet.on,hue=h>60?280:h>30?320:340;
+  var mouth=h>60?'<path d="M44 66q8 8 16 0" stroke="#2a1b3d" stroke-width="3" fill="none" stroke-linecap="round"/>':h>30?'<path d="M46 68h12" stroke="#2a1b3d" stroke-width="3" stroke-linecap="round"/>':'<path d="M44 72q8-8 16 0" stroke="#2a1b3d" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  return '<svg viewBox="0 0 104 104" width="170" height="170"><ellipse cx="52" cy="96" rx="30" ry="5" fill="rgba(0,0,0,.25)"/><path d="M52 14c24 0 38 18 38 40S76 90 52 90 14 76 14 54 28 14 52 14z" fill="hsl('+hue+',70%,66%)"/><circle cx="38" cy="52" r="5" fill="#2a1b3d"/><circle cx="66" cy="52" r="5" fill="#2a1b3d"/><circle cx="36" cy="50" r="1.6" fill="#fff"/><circle cx="64" cy="50" r="1.6" fill="#fff"/><circle cx="28" cy="64" r="5" fill="#FF6FAE" opacity=".5"/><circle cx="76" cy="64" r="5" fill="#FF6FAE" opacity=".5"/>'+mouth+
+  (on.indexOf('bow')>-1?'<path d="M52 16l-12-8v16zM52 16l12-8v16z" fill="#FF6FAE"/><circle cx="52" cy="16" r="3" fill="#fff"/>':'')+(on.indexOf('crown')>-1?'<path d="M34 20l6-12 12 8 12-8 6 12z" fill="#FFC857"/>':'')+(on.indexOf('glasses')>-1?'<g stroke="#2a1b3d" stroke-width="2.5" fill="rgba(255,255,255,.3)"><circle cx="38" cy="52" r="10"/><circle cx="66" cy="52" r="10"/><path d="M48 52h8"/></g>':'')+(on.indexOf('phones')>-1?'<path d="M16 52a36 36 0 0 1 72 0" stroke="#9B5CFF" stroke-width="5" fill="none"/><rect x="9" y="48" width="10" height="18" rx="4" fill="#9B5CFF"/><rect x="85" y="48" width="10" height="18" rx="4" fill="#9B5CFF"/>':'')+'</svg>'}
+SUB.pet=function(){var h=petHappy();
+  return '<h2>Virtual pet</h2><div class="card glow" style="align-items:center;text-align:center">'+petSvg()+'<h3>'+esc(S.pet.name)+'</h3><div style="width:100%"><div class="row sb"><span class="lab">Happiness</span><span>'+h+'%</span></div><div class="bar"><i style="width:'+h+'%"></i></div></div><div class="row" style="justify-content:center"><button class="btn pri" data-a="feed">Feed</button><button class="btn pri" data-a="playPet">Play</button><button class="btn" data-a="renamePet">Rename</button></div><span class="pill">★ '+S.pet.coins+' stars to spend</span></div>'+
+  '<div class="card"><div class="lab">Wardrobe</div><div class="list">'+ACCS.map(function(a){var own=S.pet.acc.indexOf(a[0])>-1,on=S.pet.on.indexOf(a[0])>-1;return '<div class="item"><div>'+a[1]+' <span class="chip">'+a[2]+' ★</span></div>'+(own?'<button class="btn sm'+(on?' pri':'')+'" data-a="wear" data-id="'+a[0]+'">'+(on?'Wearing':'Wear')+'</button>':'<button class="btn sm" data-a="buy" data-id="'+a[0]+'">Unlock</button>')+'</div>'}).join('')+'</div><p class="mut">Stars come from feeding when hungry, playing, daily check-ins and games. Happiness drops over time, so come back.</p></div>'
+};
+SUB.capsule=function(){
+  return '<h2>Time capsule</h2><div class="card"><label class="f">Message to the future<textarea id="cptext"></textarea></label><label class="f">Opens on<input type="date" id="cpdate"></label><button class="btn pri" data-a="addCap">Bury capsule</button></div>'+
+  (S.caps.length?'<div class="list">'+S.caps.map(function(c){var d=daysUntil(c.open);return '<div class="item"><div><b>From '+esc(nm(c.by))+'</b> <span class="chip">'+(d>0?'opens in '+d+' d':'ready')+'</span>'+(d<=0?'<div style="white-space:pre-wrap;margin-top:6px">'+esc(c.text)+'</div>':'<div class="mut">Sealed until '+fmtDate(c.open)+'</div>')+'</div></div>'}).join('')+'</div>':empty('No capsules buried'))
+};
+SUB.jar=function(){
+  return '<h2>Love jar</h2><div class="card"><div class="row"><input id="jartext" placeholder="Write a note for the jar" style="flex:1"><button class="btn pri" data-a="addJar">Drop in</button></div><div class="row"><button class="btn" data-a="drawJar">Draw a note</button><button class="btn" data-a="compl">Random compliment</button><span class="pill">'+S.jar.length+' notes</span></div><div id="jarout" class="card glow" style="text-align:center;min-height:70px;justify-content:center">Tap to draw a note.</div></div>'
+};
+SUB.universe=function(){
+  var n=stars()+S.mem.length+S.letters.length;
+  return '<h2>Our galaxy</h2><div class="card"><canvas class="sky" id="skyU" width="720" height="420"></canvas><div class="row sb"><span class="mut">Level '+(1+Math.floor(n/5))+' · '+n+' stars and counting. Tap the sky to place a wish star.</span><button class="btn" data-a="hold">Hold hands</button></div></div>'+
+  (S.stars.length?'<div class="list">'+S.stars.slice(-6).reverse().map(function(s){return '<div class="item"><div>'+esc(s.n)+'</div><span class="chip">'+fmtDate(s.t)+'</span></div>'}).join('')+'</div>':'')
+};
+SUB.doodle=function(){
+  return '<h2>Doodle board</h2><div class="card"><canvas id="doodle" width="640" height="420" style="background:#fff;width:100%"></canvas><div class="row"><input type="color" id="dcol" value="#9B5CFF"><input type="range" id="dsz" min="2" max="24" value="5" style="max-width:140px"><button class="btn" data-a="dclear">Clear</button><button class="btn pri" data-a="dsave">Save to memories</button></div><p class="mut">Live co-drawing needs the realtime backend. For now you take turns on one device.</p></div>'
+};
+SUB.army=function(){
+  var tb=S.bias[S.me];
+  return '<h2>ARMY Zone 💜</h2><div class="card glow"><div class="row sb"><div><b>Borahae mode</b><div class="mut">Switches the whole app to a purple ARMY look.</div></div><button class="btn'+(S.army?' pri':'')+'" data-a="armyMode">'+(S.army?'On':'Off')+'</button></div></div>'+
+  '<div class="card"><div class="lab">Lightstick</div><div class="stick'+'" id="stick" style="'+'background:linear-gradient('+S.stick+',var(--surf2))" data-a="lightOn"></div><div class="row" style="justify-content:center"><span class="mut">Tap to glow</span><input type="color" id="stickc" value="'+S.stick+'"></div></div>'+
+  '<div class="card"><div class="lab">Bias picker</div><div class="row"><span class="mut">'+esc(nm('a'))+': <b>'+esc(S.bias.a||'not set')+'</b></span><span class="mut">'+esc(nm('b'))+': <b>'+esc(S.bias.b||'not set')+'</b></span></div><div class="grid sm">'+MEMBERS.map(function(m){var dd=nextAnnual(m.m,m.d);return '<div class="card" style="border-color:'+m.c+'"><b>'+m.n+'</b><span class="mut">'+m.role+'</span><span class="chip">Birthday '+m.d+'/'+m.m+' · '+(dd===0?'today':dd+' d')+'</span><button class="btn sm'+(tb===m.n?' pri':'')+'" data-a="bias" data-id="'+m.n+'">'+(tb===m.n?'Your bias':'Set as bias')+'</button></div>'}).join('')+'</div>'+(S.bias.a&&S.bias.a===S.bias.b?'<div class="pill on">You share a bias.</div>':S.bias.a&&S.bias.b?'<div class="pill">Different biases, double the fun.</div>':'')+'</div>'+
+  '<div class="card"><div class="lab">Fan dates</div>'+BTSDATES.map(function(b){return '<div class="item"><div>'+b.t+'</div><span class="chip">'+nextAnnual(b.m,b.d)+' d</span></div>'}).join('')+'<div class="row"><input id="cdt" placeholder="Your own countdown (comeback, concert)" value="'+esc(S.custDate.t)+'" style="flex:2"><input id="cdd" type="date" value="'+esc(S.custDate.d)+'" style="flex:1"></div><button class="btn" data-a="setCust">Save countdown</button><p class="mut">Official release and tour dates change, so enter the ones you are waiting for yourself.</p></div>'+
+  '<div class="card"><div class="lab">Song dedications</div><div class="row">'+SONGS.map(function(s,i){return '<button class="btn sm" data-a="dedic" data-i="'+i+'">'+esc(s[0])+'</button>'}).join('')+'</div><input id="dmsg" placeholder="Why this song? (optional)"><p class="mut">Tap a song to send it to chat as a dedication and add it to your playlist.</p></div>'+
+  '<div class="card"><div class="lab">Photocard pulls</div><p class="mut">Original card art made for BuBu, not official merchandise. 3 ★ per pull.</p><button class="btn pri" data-a="pull">Pull a card (3 ★)</button><span class="pill">★ '+S.pet.coins+'</span><div class="grid sm">'+(S.cards.length?S.cards.map(function(c){return '<div class="pc '+(c.r==='Legendary'?'leg':'')+'" style="background:linear-gradient(160deg,'+c.c+','+c.rc+')"><span class="chip" style="color:#fff;border-color:rgba(255,255,255,.4)">'+c.r+'</span><b>'+esc(c.n)+'</b><span style="font-size:.7rem">BuBu ARMY card #'+c.i+'</span></div>'}).join(''):'<div class="empty" style="grid-column:1/-1">No cards yet. Earn stars from the pet and games.</div>')+'</div></div>'+
+  '<div class="card"><div class="lab">Fan quiz</div><div id="bq"></div><div class="mut">Best score: '+S.btsBest+'/'+BQ.length+'</div><button class="btn pri" data-a="bq">Start quiz</button></div>'
+};
+SUB.calls=function(){
+  return '<h2>Calls</h2><div class="card"><div class="row"><button class="btn pri" disabled>Voice call</button><button class="btn pri" disabled>Video call</button></div><p class="mut">Calls use WebRTC with a signalling service and TURN servers, and the browser must allow camera and microphone. This preview cannot place calls, so the buttons stay off instead of pretending. The integration plan is in Profile, Build status.</p>'+empty('No call history','Missed and completed calls will appear here.')+'</div>'
+};
+SUB.security=function(){
+  return '<h2>Security</h2><div class="card"><div class="lab">Planned in the backend</div><div class="list">'+['Two accounts only, enforced in PostgreSQL','Single-use invitation codes that expire','Row Level Security on every table','Private storage buckets','Device list and remote logout','Login history and audit log','Optional two-factor sign-in'].map(function(x){return '<div class="item"><div>'+x+'</div><span class="chip">backend</span></div>'}).join('')+'</div></div><div class="card"><div class="lab">In this preview</div><p class="mut">Everything is stored in this browser only. Nothing is encrypted, uploaded or shared, so do not enter secrets. Standard database encryption is not end-to-end encryption, and BuBu will say so when the backend ships.</p></div>'
+};
+
+/* play */
+var tt={b:Array(9).fill(''),t:'X',w:''},mm=null,wyrI=0,wheelA=0,spinning=false,bqi=-1,bqs=0,playTab='silly';
+var LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+P.play=function(){
+  var T=[['silly','Silly corner'],['likely','Most likely to'],['rps','Rock paper scissors'],['tap','Tap battle'],['react','Reaction duel'],['madlibs','Mad Libs'],['scramble','Word scramble'],['ttt','Tic-Tac-Toe'],['mem','Memory match'],['wyr','Would you rather'],['tod','Truth or dare'],['wheel','Spin the wheel'],['bq','Fan quiz']];
+  return '<div class="row sb"><h1>Play</h1><span class="pill" id="score">'+esc(nm('a'))+' '+S.score.a+' – '+S.score.b+' '+esc(nm('b'))+'</span></div><div class="tabs">'+T.map(function(t){return '<button class="btn'+(playTab===t[0]?' on':'')+'" data-a="ptab" data-v="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div><div id="game">'+GAME[playTab]()+'</div>'
+};
+var GAME={};
+GAME.ttt=function(){return '<div class="card"><div class="row sb"><b>'+(tt.w?(tt.w==='draw'?'Draw':esc(nm(tt.w==='X'?'a':'b'))+' wins'):esc(nm(tt.t==='X'?'a':'b'))+' to move ('+tt.t+')')+'</b><button class="btn sm" data-a="tttNew">New game</button></div><div class="ttt">'+tt.b.map(function(c,i){return '<button data-a="ttt" data-i="'+i+'" aria-label="Cell '+(i+1)+'">'+c+'</button>'}).join('')+'</div><p class="mut">Take turns on one device. Remote turns need the realtime backend.</p></div>'};
+GAME.mem=function(){if(!mm)newMM();return '<div class="card"><div class="row sb"><b>Moves '+mm.mv+'</b><button class="btn sm" data-a="mmNew">Shuffle</button></div><div class="mm">'+mm.c.map(function(c,i){var up=mm.up.indexOf(i)>-1||mm.done.indexOf(i)>-1;return '<button class="'+(up?'up':'')+'" data-a="mm" data-i="'+i+'">'+(up?c:'')+'</button>'}).join('')+'</div>'+(mm.done.length===16?'<div class="pill on">Cleared in '+mm.mv+' moves. +2 ★</div>':'')+'</div>'};
+function newMM(){var e=['💜','🌙','⭐','🌸','🎧','🦋','🍓','🎤'];var c=e.concat(e).sort(function(){return Math.random()-.5});mm={c:c,up:[],done:[],mv:0,lock:false}}
+GAME.wyr=function(){var q=WYR[wyrI%WYR.length],a=S.wyr[wyrI%WYR.length]||{},mine=a[S.me],both=a.a!==undefined&&a.b!==undefined;var same=0,tot=0;for(var k in S.wyr){var w=S.wyr[k];if(w.a!==undefined&&w.b!==undefined){tot++;if(w.a===w.b)same++}}
+  return '<div class="card"><div class="lab">Question '+(wyrI%WYR.length+1)+' of '+WYR.length+' · answering as '+esc(nm(S.me))+'</div><div class="grid sm"><button class="btn'+(mine===0?' pri':'')+'" data-a="wyr" data-i="0">'+q[0]+'</button><button class="btn'+(mine===1?' pri':'')+'" data-a="wyr" data-i="1">'+q[1]+'</button></div>'+(both?'<div class="pill on">'+(a.a===a.b?'Same pick!':'Different picks')+'</div>':'<p class="mut">Sign out and sign in as the other person to answer their side.</p>')+'<div class="row sb"><span class="mut">Compatibility: '+(tot?Math.round(same/tot*100)+'% ('+same+'/'+tot+')':'answer together to see')+'</span><button class="btn sm" data-a="wyrNext">Next</button></div></div>'};
+GAME.tod=function(){return '<div class="card" style="text-align:center"><div id="todout" class="big" style="font-size:1.4rem;min-height:70px;display:grid;place-items:center">Truth or dare?</div><div class="row" style="justify-content:center"><button class="btn pri" data-a="truth">Truth</button><button class="btn pri" data-a="dare">Dare</button></div></div>'};
+GAME.wheel=function(){return '<div class="card" style="align-items:center"><canvas id="wheel" width="300" height="300"></canvas><button class="btn pri" data-a="spin">Spin</button><div id="wres" class="mut">Spin to get a challenge.</div></div>'};
+GAME.bq=function(){return '<div class="card"><div id="bq"></div><div class="mut">Best: '+S.btsBest+'/'+BQ.length+'</div><button class="btn pri" data-a="bq">Start quiz</button></div>'};
+
+/* ---- more games ---- */
+function refreshGame(){var g=$('#game');if(g&&GAME[playTab])g.innerHTML=GAME[playTab]();updScore()}
+function updScore(){var s=$('#score');if(s)s.textContent=nm('a')+' '+S.score.a+' – '+S.score.b+' '+nm('b')}
+var TOASTS=['You are the reason my gallery is full.','To us: the best plot twist.','You make cold chai taste warm.','Here is to late-night snacks and early-morning smiles.','You are my favourite person to be silly with.'];
+var ROASTS=['You take 40 minutes to pick a movie, then choose the first one.','You say "two minutes" and vanish for an hour.','Your sense of direction gave Maps trust issues.','You steal the blanket and call it sharing.','You are 90% snacks and 10% opinions about snacks.'];
+var CHEESE=['Are you Wi-Fi? I feel a strong connection.','Are you a charger? I die without you.','Is your name Google? You have everything I am searching for.','Are you a camera? Every time I look at you, I smile.','Do you have a map? I keep getting lost in your eyes.'];
+var EXCUSES=['My cat unplugged the router.','I was stuck in an emotional traffic jam.','My phone said it needed a hug first.','I got busy thinking of you and lost track of time.','Autocorrect ate my reply.'];
+var LOMS=['Scanning hearts...','Calibrating cuteness...','Counting stars...'];
+var LIKELY=['Who is more likely to eat the last slice of pizza?','Who is more likely to cry at an advert?','Who is more likely to get us lost with GPS on?','Who is more likely to fall asleep first on movie night?','Who is more likely to say "five more minutes" and mean an hour?','Who is more likely to adopt ten pets?','Who is more likely to reply after three business days?','Who is more likely to win an argument by being cute?','Who is more likely to steal the blanket?','Who is more likely to laugh at their own joke?'];
+var WORDS=['biryani','popcorn','cuddles','blanket','selfie','chai','momos','maggi','pizza','sunset','kisses','memes','pillow','dancing','balloon'];
+var silLast='',mlLast='',lk={i:0,a:null,b:null},scr={w:'',s:'',n:0},rps={a:null,b:null,w:{a:0,b:0,t:0}},tap={on:false,a:0,b:0,left:10,done:false},ivTap=null,rx={st:'idle',t0:0,msg:''},rxT=null;
+function rpsRes(x,y){if(x===y)return 0;return ((x==='r'&&y==='s')||(x==='p'&&y==='r')||(x==='s'&&y==='p'))?1:-1}
+GAME.silly=function(){return '<div class="card"><div class="lab">Love-o-meter</div><div id="lom" class="mut">Measure how well '+esc(nm('a'))+' and '+esc(nm('b'))+' match.</div><div class="bar"><i id="lombar" style="width:0%"></i></div><button class="btn pri" data-a="lom">Measure our love</button></div><div class="card"><div class="lab">Pick one</div><div class="row"><button class="btn" data-a="sil" data-k="t">Sweet toast</button><button class="btn" data-a="sil" data-k="r">Gentle roast</button><button class="btn" data-a="sil" data-k="c">Cheesy line</button><button class="btn" data-a="sil" data-k="e">Excuse generator</button></div><div id="sout" class="card glow" style="text-align:center;min-height:70px;justify-content:center">Tap a button.</div><div class="row"><button class="btn sm" data-a="silSend">Send it to chat</button></div></div>'};
+GAME.likely=function(){var q=LIKELY[lk.i%LIKELY.length],both=lk.a!==null&&lk.b!==null,res='';
+  if(both)res=lk.a===lk.b?'Agreed: '+esc(nm(lk.a))+' it is.':(lk.a==='a'?'Both point at themselves. Humble. Suspicious.':'Each blames the other. Classic.');
+  function rowFor(w){return '<div class="row"><span class="mut" style="min-width:90px">'+esc(nm(w))+' says</span><button class="btn sm'+(lk[w]==='a'?' pri':'')+'" data-a="lkPick" data-w="'+w+'" data-p="a">'+esc(nm('a'))+'</button><button class="btn sm'+(lk[w]==='b'?' pri':'')+'" data-a="lkPick" data-w="'+w+'" data-p="b">'+esc(nm('b'))+'</button></div>'}
+  return '<div class="card"><div class="lab">Who is most likely to</div><h3>'+esc(q)+'</h3>'+rowFor('a')+rowFor('b')+(both?'<div class="pill on">'+res+'</div>':'<p class="mut">Both pick, then the answer appears. No peeking.</p>')+'<button class="btn sm" data-a="lkNext">Next question</button></div>'};
+GAME.rps=function(){var E={r:'✊',p:'✋',s:'✌️'},st=rps.a===null?'a':rps.b===null?'b':'done',h='<div class="card" style="text-align:center"><div class="lab">Rock paper scissors · pass and play</div>';
+  if(st==='done'){var r=rpsRes(rps.a,rps.b);h+='<div class="big" style="font-size:2.4rem">'+E[rps.a]+' vs '+E[rps.b]+'</div><b>'+(r===0?'Draw':esc(nm(r>0?'a':'b'))+' wins the round')+'</b><div class="mut">'+esc(nm('a'))+' '+rps.w.a+' · '+esc(nm('b'))+' '+rps.w.b+' · draws '+rps.w.t+'</div><button class="btn pri" data-a="rpsNext">Next round</button>'}
+  else h+='<h3>'+esc(nm(st))+', pick in secret</h3><div class="row" style="justify-content:center">'+['r','p','s'].map(function(k){return '<button class="btn" style="font-size:1.8rem" data-a="rps" data-k="'+k+'">'+E[k]+'</button>'}).join('')+'</div><p class="mut">'+(st==='a'?'Then hand the phone over.':'Both picks reveal together.')+'</p>';
+  return h+'</div>'};
+GAME.tap=function(){return '<div class="card" style="text-align:center"><div class="lab">10-second tap battle</div><div id="tapinfo" class="big" style="font-size:2rem">'+(tap.on?tap.left+'s':tap.done?(tap.a===tap.b?'Tie!':esc(nm(tap.a>tap.b?'a':'b'))+' wins'):'Ready?')+'</div><div class="grid sm"><button class="btn pri" style="height:120px;font-size:1.1rem" data-a="tapA">'+esc(nm('a'))+'<br><span id="ta">'+tap.a+'</span></button><button class="btn pri" style="height:120px;font-size:1.1rem" data-a="tapB">'+esc(nm('b'))+'<br><span id="tb">'+tap.b+'</span></button></div><button class="btn" data-a="tapStart">'+(tap.on?'Running...':'Start')+'</button></div>'};
+GAME.react=function(){var col=rx.st==='go'?'#1f9d63':rx.st==='wait'?'#8a2b3d':'var(--surf2)',tx=rx.st==='idle'?'Press Start. When the box turns green, hit your button first.':rx.st==='wait'?'Wait for green... no early taps!':rx.st==='go'?'GO!':rx.msg;
+  return '<div class="card" style="text-align:center"><div class="lab">Reaction duel</div><div style="background:'+col+';border-radius:16px;padding:28px 10px;font-weight:700;color:'+(rx.st==='idle'||rx.st==='end'?'var(--tx)':'#fff')+'">'+esc(tx)+'</div><div class="grid sm"><button class="btn pri" style="height:90px" data-a="rxA">'+esc(nm('a'))+'</button><button class="btn pri" style="height:90px" data-a="rxB">'+esc(nm('b'))+'</button></div><button class="btn" data-a="rxStart">Start</button></div>'};
+GAME.madlibs=function(){var f=[['mla','Adjective (spicy)'],['mlp','Place (airport)'],['mlf','Food (biryani)'],['mlz','Animal (penguin)'],['mln','Number (7)'],['mlv','Verb ending in -ing (dancing)']];
+  return '<div class="card"><div class="lab">Mad Libs love story</div><div class="grid sm">'+f.map(function(x){return '<label class="f">'+x[1]+'<input id="'+x[0]+'"></label>'}).join('')+'</div><button class="btn pri" data-a="mlGo">Write our story</button><div id="mlout" class="card glow" style="white-space:pre-wrap">Fill the blanks, then tap the button.</div><button class="btn sm" data-a="mlCopy">Copy story</button></div>'};
+GAME.scramble=function(){if(!scr.w)newScr();return '<div class="card" style="text-align:center"><div class="lab">Word scramble · solved '+scr.n+'</div><div class="big" style="font-size:2.2rem;letter-spacing:.2em;text-transform:uppercase">'+esc(scr.s)+'</div><div class="row" style="flex-wrap:nowrap"><input id="scg" placeholder="Your guess" autocomplete="off"><button class="btn pri" data-a="scGo">Check</button></div><button class="btn sm" data-a="scSkip">Skip</button></div>'};
+function newScr(){var w=pick(WORDS),s=w;for(var i=0;i<20&&s===w;i++)s=w.split('').sort(function(){return Math.random()-.5}).join('');scr.w=w;scr.s=s}
+function tapStart(){if(tap.on)return;tap={on:true,a:0,b:0,left:10,done:false};refreshGame();clearInterval(ivTap);ivTap=setInterval(function(){tap.left--;var i=$('#tapinfo');if(tap.left>0){if(i)i.textContent=tap.left+'s';return}clearInterval(ivTap);tap.on=false;tap.done=true;if(tap.a!==tap.b){S.score[tap.a>tap.b?'a':'b']++;earn(1);save()}refreshGame()},1000)}
+function rxStart(){clearTimeout(rxT);rx={st:'wait',t0:0,msg:''};refreshGame();rxT=setTimeout(function(){if(rx.st!=='wait')return;rx.st='go';rx.t0=performance.now();if(playTab==='react')refreshGame()},1500+Math.random()*3000)}
+function rxHit(k){var o=k==='a'?'b':'a';if(rx.st==='wait'){clearTimeout(rxT);rx.st='end';rx.msg=nm(k)+' jumped the gun. '+nm(o)+' wins.';S.score[o]++;save()}else if(rx.st==='go'){rx.st='end';rx.msg=nm(k)+' wins in '+Math.round(performance.now()-rx.t0)+' ms';S.score[k]++;earn(1);save()}else return;refreshGame()}
+/* profile */
+P.profile=function(){
+  var cols=['#9B5CFF','#FF6FAE','#5FA8FF','#5FD3A0','#FFC857'];
+  return '<h1>Profile</h1><div class="grid">'+secCard()+'<div class="card"><div class="lab">Names</div><div class="row">'+av('a',1)+'<input id="na" value="'+esc(S.names.a)+'">'+'</div><div class="row">'+av('b',1)+'<input id="nb" value="'+esc(S.names.b)+'"></div><label class="f">Together since<input type="date" id="since2" value="'+esc(S.since)+'"></label><button class="btn pri" data-a="saveProf">Save</button></div>'+
+  '<div class="card"><div class="lab">Look and feel</div><div class="row"><button class="btn'+(S.theme==='dark'?' pri':'')+'" data-a="theme" data-v="dark">Dark</button><button class="btn'+(S.theme==='light'?' pri':'')+'" data-a="theme" data-v="light">Light</button></div><div class="row">'+cols.map(function(c){return '<button class="btn" style="background:'+c+';width:36px;height:36px;padding:0" data-a="accent" data-v="'+c+'" aria-label="Accent '+c+'"></button>'}).join('')+'<input type="color" id="acc" value="'+S.accent+'"></div><label class="f">Background<select id="bgsel"><option value="">Glow</option><option value="aurora">Aurora</option><option value="plain">Plain</option></select></label><label class="f">Chat wallpaper<select id="wallsel"><option value="night">Night</option><option value="hearts">Hearts</option><option value="grid">Grid</option></select></label><label class="f">Text size ('+S.font+'%)<input type="range" id="fsz" min="85" max="125" value="'+S.font+'"></label><label class="row"><input type="checkbox" id="frm" '+(S.frame?'checked':'')+'> Profile frames</label><label class="row"><input type="checkbox" id="calm" '+(S.calm?'checked':'')+'> Reduce motion</label><label class="row"><input type="checkbox" id="snd" '+(S.sound?'checked':'')+'> Sounds</label></div>'+
+  '<div class="card"><div class="lab">Notifications</div><p class="mut">Preferences are saved. Real push alerts need the service worker and a push server.</p>'+[['msg','Messages'],['letters','Love letters'],['events','Events'],['mood','Mood reminders']].map(function(n){return '<label class="row"><input type="checkbox" data-a="nt" data-id="'+n[0]+'" '+(S.notif[n[0]]?'checked':'')+'> '+n[1]+'</label>'}).join('')+'<label class="row"><input type="checkbox" id="qon" '+(S.quiet.on?'checked':'')+'> Quiet hours</label><div class="row"><input type="time" id="qf" value="'+S.quiet.from+'" style="max-width:130px"><input type="time" id="qt" value="'+S.quiet.to+'" style="max-width:130px"><button class="btn sm" data-a="saveQ">Save</button></div></div>'+
+  '<div class="card"><div class="lab">Dashboard widgets</div>'+Object.keys(S.widgets).map(function(k){return '<label class="row"><input type="checkbox" data-a="wg" data-id="'+k+'" '+(S.widgets[k]?'checked':'')+'> '+k+'</label>'}).join('')+'</div></div>'+
+  '<div class="card"><div class="lab">Build status</div><div class="list">'+[['Dashboard, chat, memories, letters, plans, mood, pet, games, ARMY Zone','working here (on this device)'],['Two-account sign-in and one-time invite code','working on this device; linking two phones needs the backend'],['Real-time messages, read receipts, typing','backend: Supabase Realtime'],['Voice notes, voice and video calls','needs mic permission and WebRTC + TURN'],['Push notifications, offline queue','needs service worker + Web Push (PWA files)'],['Translation and AI smart replies','needs an AI service key'],['End-to-end encryption','future upgrade, not claimed today']].map(function(r){return '<div class="item"><div>'+r[0]+'</div><span class="chip">'+r[1]+'</span></div>'}).join('')+'</div></div>'+
+  '<div class="card"><div class="lab">Your data</div><div class="row"><button class="btn" data-a="exportAll">Copy all data (JSON)</button><button class="btn" data-a="reset">Erase everything</button></div></div>'
+};
+
+/* ---------- auth (device-local preview) ---------- */
+var authMode='login',authBusy=false,lastCode='',te=new TextEncoder();
+function h2(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')}
+function hx(s){var a=new Uint8Array(s.length/2);for(var i=0;i<a.length;i++)a[i]=parseInt(s.substr(i*2,2),16);return a}
+function rndBytes(n){var a=new Uint8Array(n);crypto.getRandomValues(a);return a}
+function pbk(pw,saltHex){return crypto.subtle.importKey('raw',te.encode(pw),'PBKDF2',false,['deriveBits']).then(function(k){return crypto.subtle.deriveBits({name:'PBKDF2',salt:hx(saltHex),iterations:150000,hash:'SHA-256'},k,256)}).then(h2)}
+function sha(s){return crypto.subtle.digest('SHA-256',te.encode(s)).then(h2)}
+function mkAcct(name,email,pw){var salt=h2(rndBytes(16));return pbk(pw,salt).then(function(h){return {name:name,email:email.toLowerCase(),salt:salt,hash:h}})}
+function acctOf(k){return S.auth[k==='a'?'owner':'partner']}
+function logEv(ev,who){S.auth.log.unshift({t:Date.now(),ev:ev,who:who||''});S.auth.log=S.auth.log.slice(0,20)}
+function sessionOk(){var s=S.auth.session;return !!(s&&Date.now()-s.at<30*DAY&&acctOf(s.who))}
+function gate(){var ok=sessionOk();document.body.classList.toggle('locked',!ok);if(ok&&S.pin&&!window.__pinOk){document.body.classList.add('locked');pinScreen();return false}if(ok){S.me=S.auth.session.who;return true}authScreen();return false}
+function raw(id){var e=document.getElementById(id);return e?e.value:''}
+function authErr(m){var e=$('#aerr');if(e)e.textContent=m}
+function hasCrypto(){return !!(window.crypto&&crypto.subtle)}
+function fld(id,l,t){var ac=t==='password'?(id==='apw2'||authMode==='join'||!S.auth.owner?'new-password':'current-password'):t==='email'?'email':'off';return '<label class="f">'+l+'<input id="'+id+'" type="'+t+'" autocomplete="'+ac+'"></label>'}
+function authScreen(){
+  var mode=!S.auth.owner?(authMode==='join'?'join':'setup'):authMode,body='';
+  var logo='<div class="col" style="align-items:center;text-align:center;gap:6px"><svg viewBox="0 0 24 24" width="64" height="64" style="filter:drop-shadow(0 0 14px var(--pk))"><path fill="url(#hg)" d="'+HEART+'"/></svg><div class="brand" style="font-size:2.2rem">BuBu</div><p class="mut">Our private universe for two.</p></div>';
+  if(mode==='setup')body='<h2>Create your space</h2><p class="mut">You become the owner. Afterwards you can invite one partner, and nobody else can ever join.</p>'+fld('anm','Your name','text')+fld('aem','Email','email')+fld('apw','Password (8+ characters)','password')+fld('apw2','Confirm password','password')+'<button type="button" class="btn pri" data-a="doSetup">Create space</button><button type="button" class="btn ghost" data-a="amode" data-v="join">Joining from her phone? Use a pairing code</button>';
+  else if(mode==='join')body='<h2>Join with an invite</h2><p class="mut">Enter the code your partner gave you.</p>'+fld('acode','Invite code or pairing code','text')+fld('anm','Your name','text')+fld('aem','Email','email')+fld('apw','Password (8+ characters)','password')+'<button type="button" class="btn pri" data-a="doJoin">Join BuBu</button><button type="button" class="btn ghost" data-a="amode" data-v="login">Back to sign in</button>';
+  else body='<h2>Welcome back</h2>'+fld('aem','Email','email')+fld('apw','Password','password')+'<button type="button" class="btn pri" data-a="doLogin">Sign in</button><div class="row sb"><button type="button" class="btn sm ghost" data-a="amode" data-v="join">I have an invite code</button><button type="button" class="btn sm ghost" data-a="forgot">Forgot password?</button></div>';
+  $('#view').innerHTML='<div style="min-height:80vh;display:grid;place-items:center"><div class="col" style="width:100%;max-width:400px;gap:22px">'+logo+'<form class="card glow" id="aform" novalidate>'+body+'<div id="aerr" role="alert" style="color:var(--bad);font-size:.85rem"></div><span class="mut" style="font-size:.74rem">Accounts are kept on this phone. Use a pairing code to link her phone.</span></form></div></div>'
+}
+function doSetup(){
+  if(authBusy)return;var n=v('anm'),em=v('aem'),p=raw('apw'),p2=raw('apw2');
+  if(!n)return authErr('Enter your name.');
+  if(!/^\S+@\S+\.\S+$/.test(em))return authErr('Enter a valid email address.');
+  if(p.length<8)return authErr('Use at least 8 characters for the password.');
+  if(p!==p2)return authErr('The two passwords do not match.');
+  if(!hasCrypto())return authErr('Secure hashing is blocked here. Open the app over https.');
+  authBusy=true;authErr('Creating your space...');
+  mkAcct(n,em,p).then(function(ac){S.auth.owner=ac;S.names.a=n;S.auth.session={who:'a',at:Date.now()};logEv('Space created','a');save();authBusy=false;render();hearts(10)}).catch(function(){authBusy=false;authErr('Something went wrong. Try again.')})
+}
+function failAuth(){S.auth.fails=(S.auth.fails||0)+1;if(S.auth.fails>=5){S.auth.lockUntil=Date.now()+30000;S.auth.fails=0}logEv('Failed sign-in','');save()}
+function doLogin(){
+  if(authBusy)return;var now=Date.now();
+  if(S.auth.lockUntil>now)return authErr('Too many attempts. Wait '+Math.ceil((S.auth.lockUntil-now)/1000)+' seconds.');
+  if(!hasCrypto())return authErr('Secure hashing is blocked here. Open the app over https.');
+  var em=v('aem').toLowerCase(),p=raw('apw'),who=null;['a','b'].forEach(function(k){var ac=acctOf(k);if(ac&&ac.email===em)who=k});
+  var ac=who&&acctOf(who),salt=ac?ac.salt:h2(rndBytes(16));authBusy=true;
+  pbk(p,salt).then(function(h){authBusy=false;if(!ac||h!==ac.hash){failAuth();return authErr('Email or password is incorrect.')}S.auth.fails=0;S.auth.session={who:who,at:Date.now()};logEv('Signed in',who);save();render()}).catch(function(){authBusy=false;authErr('Something went wrong. Try again.')})
+}
+function doJoin(){
+  if(authBusy)return;var now=Date.now();var pcode=raw('acode').trim();if(/^BUBU\./i.test(pcode))return joinPair(pcode);if(!S.auth.owner)return authErr('Paste the pairing code from his phone.');
+  if(S.auth.lockUntil>now)return authErr('Too many attempts. Wait '+Math.ceil((S.auth.lockUntil-now)/1000)+' seconds.');
+  if(!hasCrypto())return authErr('Secure hashing is blocked here. Open the app over https.');
+  var code=raw('acode').toUpperCase().replace(/[^A-Z0-9]/g,''),n=v('aem')&&v('anm'),em=v('aem'),p=raw('apw'),nm2=v('anm');
+  if(S.auth.partner)return authErr('This space already has two members.');
+  if(!code||!nm2)return authErr('Enter the invite code and your name.');
+  if(!/^\S+@\S+\.\S+$/.test(em))return authErr('Enter a valid email address.');
+  if(p.length<8)return authErr('Use at least 8 characters for the password.');
+  if(em.toLowerCase()===S.auth.owner.email)return authErr('Use a different email from the owner.');
+  authBusy=true;
+  sha(code).then(function(h){var inv=S.auth.invite;if(!inv||inv.used||inv.exp<Date.now()||inv.h!==h){authBusy=false;failAuth();return authErr('That invite code is not valid or has expired.')}
+    return mkAcct(nm2,em,p).then(function(ac){S.auth.partner=ac;S.names.b=nm2;inv.used=true;lastCode='';authMode='login';S.auth.session={who:'b',at:Date.now()};logEv('Partner joined','b');save();authBusy=false;render();hearts(14)})}).catch(function(){authBusy=false;authErr('Something went wrong. Try again.')})
+}
+function genInvite(){
+  if(S.me!=='a'||S.auth.partner)return;if(!hasCrypto())return toast('Secure code generation needs https.');
+  var al='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=rndBytes(8),c='';for(var i=0;i<8;i++)c+=al[b[i]%al.length];
+  sha(c).then(function(h){S.auth.invite={h:h,exp:Date.now()+48*36e5,used:false};lastCode=c.slice(0,4)+'-'+c.slice(4);logEv('Invite created','a');save();render()})
+}
+function secCard(){
+  var a=S.auth,h='<div class="card"><div class="lab">Account and security</div><div class="list"><div class="item"><div><b>'+esc(a.owner.name)+'</b> <span class="chip">owner</span><div class="mut">'+esc(a.owner.email)+'</div></div></div>';
+  h+=a.partner?'<div class="item"><div><b>'+esc(a.partner.name)+'</b> <span class="chip">partner</span><div class="mut">'+esc(a.partner.email)+'</div></div></div>':'<div class="item"><div class="mut">Partner seat is open</div></div>';
+  h+='</div>';
+  if(a.partner)h+='<p class="mut">Both seats are taken. Nobody else can join.</p>';
+  else if(S.me==='a'){var inv=a.invite&&!a.invite.used&&a.invite.exp>Date.now();
+    if(inv)h+='<div class="card glow" style="text-align:center"><div class="lab">Invite code</div>'+(lastCode?'<div class="big" style="font-size:2rem;letter-spacing:.12em">'+lastCode+'</div><div class="row" style="justify-content:center"><button class="btn sm" data-a="copyCode">Copy</button></div>':'<p class="mut">The code is shown once. Make a new one if you lost it.</p>')+'<div class="mut">Works once. Expires '+new Date(a.invite.exp).toLocaleString()+'.</div><div class="row" style="justify-content:center"><button class="btn sm" data-a="revokeInvite">Revoke</button></div></div>';
+    h+='<button class="btn pri" data-a="genInvite">'+(inv?'Make a new code':'Invite your partner')+'</button><p class="mut">She opens BuBu, taps "I have an invite code", and joins. This preview keeps accounts on this device, so she joins here. Linking two phones needs the backend.</p>'}
+  h+='<div class="row"><button class="btn" data-a="logout">Sign out</button></div><div class="lab">Sign-in history</div>'+(a.log.length?'<div class="list">'+a.log.slice(0,6).map(function(l){return '<div class="item"><div>'+esc(l.ev)+(l.who?' · '+esc(nm(l.who)):'')+'</div><span class="chip">'+new Date(l.t).toLocaleString()+'</span></div>'}).join('')+'</div>':'<div class="mut">Nothing yet.</div>')+'</div>';
+  return h
+}
+/* ---------- render ---------- */
+function applyLook(){
+  var r=document.documentElement;r.dataset.theme=S.theme;
+  var ac=S.army?'#9B5CFF':S.accent;r.style.setProperty('--ac',ac);r.style.setProperty('--fs',S.font);
+  document.body.classList.toggle('army',S.army);document.body.classList.toggle('calm',S.calm);
+  document.body.classList.remove('w-aurora','w-plain');if(S.bg)document.body.classList.add('w-'+S.bg)
+}
+function navHtml(c){return NAV.map(function(n){var p=n[1]==='OUR WORLD'?'world':n[1].toLowerCase();return '<button class="'+(S.page===p?'on':'')+'" data-a="nav" data-p="'+p+'"'+(S.page===p?' aria-current="page"':'')+'><svg viewBox="0 0 24 24"><path d="'+IC[n[0]]+'"/></svg>'+(c?n[1]:n[1])+'</button>'}).join('')}
+function render(){
+  tickClear();applyLook();if(!gate())return;
+  $('#nav').innerHTML=navHtml();
+  $('#side').innerHTML='<div class="brand" style="margin-bottom:14px"><svg viewBox="0 0 24 24"><path fill="url(#hg)" d="'+HEART+'"/></svg>BuBu</div>'+navHtml(1);
+  var top='<div class="top"><div class="brand"><svg viewBox="0 0 24 24"><path fill="url(#hg)" d="'+HEART+'"/></svg>BuBu</div><span class="pill demo">Preview · saved on this device</span></div>';
+  $('#view').innerHTML=(window.matchMedia('(min-width:820px)').matches?'':top)+P[S.page]();
+  window.scrollTo(0,0);post()
+}
+function post(){
+  var sh=$('#skyH');if(sh)sky(sh,false);var su=$('#skyU');if(su){sky(su,true)}
+  var dc=$('#doodle');if(dc)initDoodle(dc);var wc=$('#wheel');if(wc)drawWheel();
+  var m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
+  var bg=$('#bgsel');if(bg)bg.value=S.bg||'';var w=$('#wallsel');if(w)w.value=S.wall;postX();
+}
+
+/* sky */
+function rnd(seed){var s=seed;return function(){s=(s*9301+49297)%233280;return s/233280}}
+function sky(cv,big){
+  var c=cv.getContext('2d'),W=cv.width,H=cv.height,r=rnd(7);var n=60+Math.min(stars()+S.mem.length+S.letters.length,60)*3;var stop=false;
+  var bgS=[];for(var i=0;i<n;i++)bgS.push([r()*W,r()*H,r()*1.4+.3,r()*6]);
+  function draw(t){if(!document.body.contains(cv))return;c.fillStyle='#05030A';c.fillRect(0,0,W,H);
+    var g=c.createRadialGradient(W*.6,H*.5,10,W*.6,H*.5,W*.6);g.addColorStop(0,'rgba(155,92,255,.28)');g.addColorStop(.6,'rgba(255,111,174,.08)');g.addColorStop(1,'transparent');c.fillStyle=g;c.fillRect(0,0,W,H);
+    bgS.forEach(function(s){var a=.4+.6*Math.abs(Math.sin(t/1200+s[3]));c.fillStyle='rgba(237,230,250,'+a+')';c.beginPath();c.arc(s[0],s[1],s[2],0,7);c.fill()});
+    S.stars.forEach(function(s){var x=s.x*W,y=s.y*H,p=6+Math.sin(t/500+x)*1.5;c.fillStyle='#FF6FAE';c.shadowColor='#FF6FAE';c.shadowBlur=14;c.beginPath();for(var k=0;k<10;k++){var rr=k%2?p*.45:p,a=k*Math.PI/5-Math.PI/2;c.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}c.fill();c.shadowBlur=0;if(big){c.fillStyle='rgba(237,230,250,.85)';c.font='11px Manrope,sans-serif';c.fillText(s.n.slice(0,22),x+9,y+4)}});
+    if(!S.calm&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches)requestAnimationFrame(draw)}
+  draw(0);
+  if(big)cv.onclick=function(e){var b=cv.getBoundingClientRect();var s={id:uid(),n:'Wish '+(S.stars.length+1),x:(e.clientX-b.left)/b.width,y:(e.clientY-b.top)/b.height,t:Date.now()};S.stars.push(s);earn(1);save();toast('Wish star placed. +1 ★');draw(0)}
+}
+/* doodle */
+function initDoodle(cv){var c=cv.getContext('2d'),d=false,lx=0,ly=0;c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);c.lineCap='round';
+  function pos(e){var b=cv.getBoundingClientRect();return[(e.clientX-b.left)*cv.width/b.width,(e.clientY-b.top)*cv.height/b.height]}
+  cv.onpointerdown=function(e){d=true;var p=pos(e);lx=p[0];ly=p[1];cv.setPointerCapture(e.pointerId)};
+  cv.onpointermove=function(e){if(!d)return;var p=pos(e);c.strokeStyle=$('#dcol').value;c.lineWidth=+$('#dsz').value;c.beginPath();c.moveTo(lx,ly);c.lineTo(p[0],p[1]);c.stroke();lx=p[0];ly=p[1]};
+  cv.onpointerup=function(){d=false}}
+/* wheel */
+function drawWheel(){var cv=$('#wheel');if(!cv)return;var c=cv.getContext('2d'),n=WHEEL.length,sg=Math.PI*2/n,R=140;c.clearRect(0,0,300,300);c.save();c.translate(150,150);c.rotate(wheelA);
+  for(var i=0;i<n;i++){c.beginPath();c.moveTo(0,0);c.arc(0,0,R,i*sg,(i+1)*sg);c.fillStyle='hsl('+(270+i*12)+',60%,'+(i%2?30:42)+'%)';c.fill();c.save();c.rotate(i*sg+sg/2);c.fillStyle='#fff';c.font='600 11px Manrope,sans-serif';c.textAlign='right';c.fillText(WHEEL[i].slice(0,18),R-10,4);c.restore()}
+  c.restore();c.fillStyle='#FF6FAE';c.beginPath();c.moveTo(150,6);c.lineTo(140,-6+0);c.lineTo(160,-6);c.closePath();c.fill();c.beginPath();c.moveTo(150,22);c.lineTo(140,0);c.lineTo(160,0);c.closePath();c.fill()}
+function spin(){if(spinning)return;spinning=true;var v=.35+Math.random()*.25;(function f(){wheelA+=v;v*=.985;drawWheel();if(v>.002)requestAnimationFrame(f);else{spinning=false;var n=WHEEL.length,sg=Math.PI*2/n;var a=((-Math.PI/2-wheelA)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);var i=Math.floor(a/sg);var r=$('#wres');if(r)r.innerHTML='<b>'+esc(WHEEL[i])+'</b>';ding()}})()}
+
+/* ---------- actions ---------- */
+function go(p,s){S.page=p;S.sub=s||'';save();render()}
+function reSub(){render()}
+
+var A={
+ nav:function(t){chatSel=null;go(t.dataset.p)},
+ go:function(t){go(t.dataset.p,t.dataset.v)},
+ sub:function(t){S.sub=t.dataset.v;save();render()},
+ setSince:function(){var d=v('since');if(!d)return toast('Pick a date first.');S.since=d;addStar('Our beginning');save();render();hearts(10)},
+ surprise:function(){var o=[function(){return 'Compliment: '+pick(COMPL)},function(){return 'Date idea: '+pick(DATES)},function(){var m=S.mem;return m.length?'Memory: '+pick(m).cap:'Make a first memory today.'},function(){return 'Love note: '+pick(LOVE)}];hearts(10);modal('<h3>Surprise</h3><p>'+esc(pick(o)())+'</p><button class="btn pri" data-a="closeModal">Nice</button>');ding()},
+ closeModal:function(t){t.closest('.modal').remove()},
+ askChat:function(){sendMsg({text:'Daily question: '+QUESTIONS[dayIdx()%QUESTIONS.length]});toast('Sent to chat');go('chat')},
+ grat:function(){go('world','mood')},
+ /* chat */
+ swap:function(){S.me=other();save();render()},
+ sel:function(t){chatSel=chatSel===t.dataset.id?null:t.dataset.id;$('#msgs').innerHTML=bubbles()},
+ send:function(){var t=v('ctext');if(!t)return;sendMsg({text:t,reply:chatReply});chatReply=null;ding();earn(0);render()},
+ reply:function(t){chatReply=t.dataset.id;chatSel=null;render()},
+ cancelReply:function(){chatReply=null;render()},
+ react:function(t){var m=S.msgs.filter(function(x){return x.id===t.dataset.id})[0];m.rx=m.rx===t.dataset.e?'':t.dataset.e;chatSel=null;save();render()},
+ pin:function(t){var m=S.msgs.filter(function(x){return x.id===t.dataset.id})[0];m.pin=!m.pin;chatSel=null;save();render()},
+ copy:function(t){var m=S.msgs.filter(function(x){return x.id===t.dataset.id})[0];cp(m.text||'')},
+ edit:function(t){var m=S.msgs.filter(function(x){return x.id===t.dataset.id})[0];var mo=modal('<h3>Edit message</h3><textarea id="etx">'+esc(m.text)+'</textarea><div class="row"><button class="btn pri" id="ok">Save</button><button class="btn" id="no">Cancel</button></div>');$('#ok',mo).onclick=function(){m.text=$('#etx').value;m.edited=1;save();mo.remove();chatSel=null;render()};$('#no',mo).onclick=function(){mo.remove()}},
+ del:function(t){confirmBox('This removes the message from this device.',function(){S.msgs=S.msgs.filter(function(x){return x.id!==t.dataset.id});chatSel=null;save();render()})},
+ stick:function(){sendMsg({text:'🤗 sends you a big hug'});hearts(6);render()},
+ mood2:function(){sendMsg({text:pick(['I miss you 💗','Missing you right now','Wish you were here'])});render()},
+ borahae:function(){sendMsg({text:'Borahae 💜 (I purple you)'});hearts(8);render()},
+ exportChat:function(){cp(S.msgs.slice().sort(function(a,b){return a.t-b.t}).map(function(m){return '['+new Date(m.t).toLocaleString()+'] '+nm(m.from)+': '+(m.text||'[photo]')}).join('\n')||'No messages')},
+ schedule:function(){var t=v('stext'),w=v('swhen');if(!t||!w)return toast('Add a message and a time.');var at=new Date(w).getTime();if(at<=Date.now())return toast('Pick a time in the future.');S.sched.push({id:uid(),text:t,at:at,from:S.me});save();render()},
+ unsched:function(t){S.sched=S.sched.filter(function(s){return s.id!==t.dataset.id});save();render()},
+ /* memories */
+ addMem:function(){var c=v('mcap');if(!c)return toast('Write a caption.');var f=$('#mimg').files[0];function done(img){S.mem.push({id:uid(),cap:c,d:v('mdate'),tag:v('mtag'),img:img,fav:0});earn(1);addStar(c);save();render();toast('Memory saved. +1 ★')}if(f)saveImg(f,done);else done('')},
+ favMem:function(t){var m=S.mem.filter(function(x){return x.id===t.dataset.id})[0];m.fav=!m.fav;save();render()},
+ delMem:function(t){confirmBox('Remove this memory?',function(){S.mem=S.mem.filter(function(x){return x.id!==t.dataset.id});save();render()})},
+ favOnly:function(){memFav=!memFav;render()},
+ addMile:function(){var t=v('mltitle'),d=v('mldate');if(!t||!d)return toast('Add a title and a date.');S.miles.push({id:uid(),t:t,d:d,n:v('mlnote')});addStar(t);earn(1);save();render()},
+ delMile:function(t){S.miles=S.miles.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ /* letters */
+ addLetter:function(){var b=v('lbody');if(!b)return toast('Write something first.');S.letters.push({id:uid(),from:S.me,to:$('#ltype').value==='future'?S.me:other(),type:$('#ltype').value,title:v('ltitle'),body:b,open:v('lopen'),t:Date.now()});earn(1);save();render();hearts(6)},
+ openLetter:function(t){var l=S.letters.filter(function(x){return x.id===t.dataset.id})[0];l.opened=!l.opened;save();render();if(l.opened)hearts(5)},
+ /* plans */
+ addEv:function(){var t=v('et'),d=v('ed');if(!t||!d)return toast('Add a name and a date.');S.events.push({id:uid(),t:t,d:d});save();render()},
+ delEv:function(t){S.events=S.events.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ addTk:function(){var t=v('tk');if(!t)return;S.tasks.push({id:uid(),t:t});save();render()},
+ addBk:function(){var t=v('bk');if(!t)return;S.bucket.push({id:uid(),t:t});save();render()},
+ chkTk:function(t){var i=S.tasks.filter(function(x){return x.id===t.dataset.id})[0];i.done=t.checked;if(t.checked)earn(1);save();render()},
+ chkBk:function(t){var i=S.bucket.filter(function(x){return x.id===t.dataset.id})[0];i.done=t.checked;if(t.checked){addStar('Dream done: '+i.t);earn(2);hearts(8)}save();render()},
+ delTk:function(t){S.tasks=S.tasks.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ delBk:function(t){S.bucket=S.bucket.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ dateIdea:function(){$('#dateidea').textContent=pick(DATES)},
+ /* mood */
+ mood:function(t){var m=MOODS[+t.dataset.i];S.moods.push({id:uid(),by:S.me,e:m[0],l:m[1],note:v('mnote'),t:Date.now()});var k=dayKey();S.checkins[k]=(S.checkins[k]||[]).concat([S.me]);earn(1);save();render();toast('Checked in. +1 ★')},
+ addJ:function(){var t=v('jtext');if(!t)return;S.journal.push({id:uid(),by:S.me,text:t,shared:$('#jshare').checked,t:Date.now()});save();render()},
+ delJ:function(t){S.journal=S.journal.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ addG:function(){var t=v('gtext');if(!t)return;S.grat.push({by:S.me,text:t,t:Date.now()});earn(1);save();render()},
+ /* music */
+ addTrack:function(){var t=v('ttitle');if(!t)return toast('Add a song title.');S.tracks.push({id:uid(),title:t,artist:v('tartist'),link:v('tlink'),ded:v('tded'),by:S.me});save();render()},
+ favTrack:function(t){var i=S.tracks.filter(function(x){return x.id===t.dataset.id})[0];i.fav=!i.fav;save();render()},
+ delTrack:function(t){S.tracks=S.tracks.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ recSong:function(){var s=pick(SONGS);$('#rec').textContent='Try: '+s[0]+' · '+s[1]},
+ watch:function(){var u=v('wurl');$('#wout').innerHTML=/^https?:\/\//.test(u)?'<a href="'+esc(u)+'" target="_blank" rel="noopener">Open the link in a new tab</a>':'<span class="mut">Enter a link that starts with https://</span>'},
+ /* pet */
+ feed:function(){var h=petHappy();S.pet.fed=Date.now();if(h<90){earn(1);toast('Yum. +1 ★')}else toast('Not hungry yet.');save();render()},
+ playPet:function(){var h=petHappy();S.pet.played=Date.now();if(h<90){earn(1);toast('Fun. +1 ★')}else toast('Happy already.');save();render();hearts(3)},
+ renamePet:function(){var m=modal('<h3>Name your pet</h3><input id="pn" value="'+esc(S.pet.name)+'"><div class="row"><button class="btn pri" id="ok">Save</button></div>');$('#ok',m).onclick=function(){S.pet.name=$('#pn').value||'Bubu';save();m.remove();render()}},
+ buy:function(t){var a=ACCS.filter(function(x){return x[0]===t.dataset.id})[0];if(S.pet.coins<a[2])return toast('You need '+a[2]+' ★. You have '+S.pet.coins+'.');S.pet.coins-=a[2];S.pet.acc.push(a[0]);S.pet.on.push(a[0]);save();render()},
+ wear:function(t){var i=S.pet.on.indexOf(t.dataset.id);if(i>-1)S.pet.on.splice(i,1);else S.pet.on.push(t.dataset.id);save();render()},
+ /* capsule/jar */
+ addCap:function(){var t=v('cptext'),d=v('cpdate');if(!t||!d)return toast('Add a message and an opening date.');S.caps.push({id:uid(),by:S.me,text:t,open:d});save();render()},
+ addJar:function(){var t=v('jartext');if(!t)return;S.jar.push({t:t,by:S.me});earn(0);save();render()},
+ drawJar:function(){$('#jarout').textContent=S.jar.length?pick(S.jar).t:'The jar is empty. Drop a note in first.'},
+ compl:function(){$('#jarout').textContent=pick(COMPL);hearts(4)},
+ hold:function(){hearts(14);toast('Holding hands 🤝')},
+ dclear:function(){var c=$('#doodle');c.getContext('2d').fillStyle='#fff';c.getContext('2d').fillRect(0,0,c.width,c.height)},
+ dsave:function(){var c=$('#doodle'),o=document.createElement('canvas');o.width=320;o.height=210;o.getContext('2d').drawImage(c,0,0,320,210);S.mem.push({id:uid(),cap:'Doodle by '+nm(S.me),d:new Date().toISOString().slice(0,10),tag:'doodle',img:o.toDataURL('image/jpeg',.7)});save();toast('Saved to memories')},
+ /* army */
+ armyMode:function(){S.army=!S.army;save();render()},
+ lightOn:function(t){t.classList.toggle('on');ding()},
+ bias:function(t){S.bias[S.me]=t.dataset.id;save();render()},
+ setCust:function(){S.custDate={t:v('cdt'),d:v('cdd')};save();toast('Countdown saved');render()},
+ dedic:function(t){var s=SONGS[+t.dataset.i],n=v('dmsg');sendMsg({text:'💜 Song for you: '+s[0]+(n?' — '+n:'')});S.tracks.push({id:uid(),title:s[0],artist:s[1],link:'',ded:n,by:S.me});save();toast('Dedication sent to chat')},
+ pull:function(){if(S.pet.coins<3)return toast('You need 3 ★. Feed or play with your pet, add memories, or finish a game.');S.pet.coins-=3;var r=Math.random()*100,k=r<5?2:r<30?1:0,m=pick(MEMBERS);S.cards.push({n:m.n,c:m.c,rc:RARE[k][2],r:RARE[k][0],i:S.cards.length+1});save();render();if(k===2)hearts(12)},
+ bq:function(){bqi=0;bqs=0;showQ()},
+ bqa:function(t){var q=BQ[bqi];if(+t.dataset.i===q[2])bqs++;bqi++;showQ()},
+ /* games */
+ ptab:function(t){playTab=t.dataset.v;render()},
+ ttt:function(t){var i=+t.dataset.i;if(tt.b[i]||tt.w)return;tt.b[i]=tt.t;var w=LINES.filter(function(l){return l.every(function(k){return tt.b[k]===tt.t})}).length;if(w){tt.w=tt.t;S.score[tt.t==='X'?'a':'b']++;earn(1);save()}else if(tt.b.every(Boolean))tt.w='draw';else tt.t=tt.t==='X'?'O':'X';$('#game').innerHTML=GAME.ttt();$('#score').textContent=nm('a')+' '+S.score.a+' – '+S.score.b+' '+nm('b')},
+ tttNew:function(){tt={b:Array(9).fill(''),t:'X',w:''};$('#game').innerHTML=GAME.ttt()},
+ mm:function(t){var i=+t.dataset.i;if(mm.lock||mm.up.indexOf(i)>-1||mm.done.indexOf(i)>-1)return;mm.up.push(i);if(mm.up.length===2){mm.mv++;mm.lock=true;var a=mm.up[0],b=mm.up[1];$('#game').innerHTML=GAME.mem();setTimeout(function(){if(mm.c[a]===mm.c[b])mm.done.push(a,b);mm.up=[];mm.lock=false;if(mm.done.length===16){earn(2);save()}if($('#game'))$('#game').innerHTML=GAME.mem()},650)}else $('#game').innerHTML=GAME.mem()},
+ mmNew:function(){newMM();$('#game').innerHTML=GAME.mem()},
+ wyr:function(t){var k=wyrI%WYR.length;S.wyr[k]=S.wyr[k]||{};S.wyr[k][S.me]=+t.dataset.i;save();$('#game').innerHTML=GAME.wyr()},
+ wyrNext:function(){wyrI++;$('#game').innerHTML=GAME.wyr()},
+ truth:function(){$('#todout').textContent=pick(TRUTH)},dare:function(){$('#todout').textContent=pick(DARE)},
+ spin:spin,
+ /* profile */
+ /* more games + auth */
+ lom:function(){var m=$('#lom'),b=$('#lombar');if(!m)return;var i=0;b.style.width='0%';m.textContent=LOMS[0];var iv=setInterval(function(){i++;if(i<LOMS.length){m.textContent=LOMS[i];return}clearInterval(iv);var p=90+Math.floor(Math.random()*11);b.style.width=p+'%';m.innerHTML='<b>'+p+'% match.</b> '+esc(pick(['Doctors say this is contagious.','The universe is blushing.','Scientists confirm: too cute.','Result is final. No refunds.']));hearts(6)},700)},
+ sil:function(t){var k=t.dataset.k,L=k==='t'?TOASTS:k==='r'?ROASTS:k==='c'?CHEESE:EXCUSES;silLast=pick(L);$('#sout').textContent=silLast},
+ silSend:function(){if(!silLast)return toast('Pick something first.');sendMsg({text:silLast});toast('Sent to chat')},
+ lkPick:function(t){lk[t.dataset.w]=t.dataset.p;if(lk.a!==null&&lk.b!==null)earn(0);refreshGame()},
+ lkNext:function(){lk={i:lk.i+1,a:null,b:null};refreshGame()},
+ rps:function(t){if(rps.a===null)rps.a=t.dataset.k;else if(rps.b===null){rps.b=t.dataset.k;var r=rpsRes(rps.a,rps.b);if(r>0)rps.w.a++;else if(r<0)rps.w.b++;else rps.w.t++;if(r!==0){S.score[r>0?'a':'b']++;earn(1);save()}}refreshGame()},
+ rpsNext:function(){rps.a=null;rps.b=null;refreshGame()},
+ tapStart:tapStart,
+ tapA:function(){if(tap.on){tap.a++;var e=$('#ta');if(e)e.textContent=tap.a}},
+ tapB:function(){if(tap.on){tap.b++;var e=$('#tb');if(e)e.textContent=tap.b}},
+ rxStart:rxStart,rxA:function(){rxHit('a')},rxB:function(){rxHit('b')},
+ mlGo:function(){var g=function(i){return v(i)},a=g('mla'),p=g('mlp'),f=g('mlf'),z=g('mlz'),n=g('mln'),vb=g('mlv');if(!(a&&p&&f&&z&&n&&vb))return toast('Fill every blank first.');var A=nm('a'),B=nm('b');mlLast=pick([A+' and '+B+' went to a '+a+' '+p+'. They ate '+n+' '+f+' and danced like a '+z+'. Then '+A+' whispered, "I love you more than '+f+'!" '+B+' laughed so hard that everyone looked. The end.','Breaking news: '+A+' was caught '+vb+' with a giant '+z+' in a '+a+' '+p+'. Witnesses say '+B+' was holding '+n+' '+f+' and shouting "That is my favourite!" Police were last seen joining the party.']);$('#mlout').textContent=mlLast;earn(1);save();hearts(5)},
+ mlCopy:function(){if(!mlLast)return toast('Write a story first.');cp(mlLast)},
+ scGo:function(){var g=v('scg').toLowerCase();if(!g)return;if(g===scr.w){scr.n++;earn(1);save();toast('Correct! +1 ★');newScr();refreshGame();hearts(4)}else toast('Not quite. Try again.')},
+ scSkip:function(){toast('It was "'+scr.w+'"');newScr();refreshGame()},
+ amode:function(t){authMode=t.dataset.v;render()},
+ doSetup:doSetup,doLogin:doLogin,doJoin:doJoin,genInvite:genInvite,
+ copyCode:function(){cp(lastCode)},
+ revokeInvite:function(){S.auth.invite=null;lastCode='';logEv('Invite revoked','a');save();render()},
+ logout:function(){authMode='login';S.auth.session=null;logEv('Signed out',S.me);save();render()},
+ forgot:function(){var m=modal('<h3>Forgot your password?</h3><p class="mut">Reset by email needs the backend, which this preview does not have. The only option here is to erase BuBu on this device and start again.</p><div class="row"><button class="btn" id="fw">Erase and start again</button><button class="btn ghost" id="fc">Cancel</button></div>');$('#fc',m).onclick=function(){m.remove()};$('#fw',m).onclick=function(){m.remove();confirmBox('This erases every account and all data stored by BuBu in this browser.',function(){try{localStorage.removeItem(KEY)}catch(e){}S=def();render()})}},
+ saveProf:function(){S.names.a=v('na')||'Me';S.names.b=v('nb')||'Her';S.since=v('since2');save();render();toast('Saved')},
+ theme:function(t){S.theme=t.dataset.v;save();render()},
+ accent:function(t){S.accent=t.dataset.v;S.army=false;save();render()},
+ nt:function(t){S.notif[t.dataset.id]=t.checked;save()},
+ saveQ:function(){S.quiet={on:$('#qon').checked,from:v('qf'),to:v('qt')};save();toast('Quiet hours saved')},
+ wg:function(t){S.widgets[t.dataset.id]=t.checked?1:0;save()},
+ exportAll:function(){cp(JSON.stringify(S))},
+ reset:function(){confirmBox('This erases every message, memory and setting stored in this browser.',function(){try{localStorage.removeItem(KEY)}catch(e){}S=def();render();toast('Everything erased')})}
+};
+function cp(txt){var ok=function(){toast('Copied')};try{navigator.clipboard.writeText(txt).then(ok,function(){fallbackCopy(txt)})}catch(e){fallbackCopy(txt)}}
+function fallbackCopy(txt){var m=modal('<h3>Copy this text</h3><textarea id="cpa" style="min-height:160px">'+esc(txt)+'</textarea><button class="btn" id="ok">Close</button>');var a=$('#cpa',m);a.focus();a.select();$('#ok',m).onclick=function(){m.remove()}}
+function showQ(){var b=$('#bq');if(!b)return;if(bqi>=BQ.length){if(bqs>S.btsBest)S.btsBest=bqs;earn(Math.floor(bqs/3));save();b.innerHTML='<div class="card glow"><h3>'+bqs+' of '+BQ.length+'</h3><p class="mut">'+(bqs===BQ.length?'Perfect. True ARMY. 💜':bqs>6?'Strong score.':'Good start, try again.')+'</p></div>';if(bqs>6)hearts(8);return}
+  var q=BQ[bqi];b.innerHTML='<div class="lab">Question '+(bqi+1)+' of '+BQ.length+'</div><h3>'+esc(q[0])+'</h3><div class="grid sm">'+q[1].map(function(o,i){return '<button class="btn" data-a="bqa" data-i="'+i+'">'+esc(o)+'</button>'}).join('')+'</div>'}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){var t=e.target.closest('[data-a]');if(!t||t.tagName==='INPUT')return;var f=A[t.dataset.a];if(f)f(t,e)});
+document.addEventListener('change',function(e){var t=e.target;
+  if(t.matches&&t.matches('input[data-a]')){var f=A[t.dataset.a];if(f)f(t,e);return}
+  if(t.id==='cimg'&&t.files[0]){saveImg(t.files[0],function(img){sendMsg({img:img,text:v('ctext')});render()})}
+  if(t.id==='acc'){S.accent=t.value;S.army=false;save();applyLook()}
+  if(t.id==='bgsel'){S.bg=t.value;save();applyLook()}
+  if(t.id==='wallsel'){S.wall=t.value;save()}
+  if(t.id==='stickc'){S.stick=t.value;save();var s=$('#stick');if(s)s.style.background='linear-gradient('+t.value+',var(--surf2))';}
+  if(t.id==='frm'){S.frame=t.checked;save()}if(t.id==='calm'){S.calm=t.checked;save();applyLook()}if(t.id==='snd'){S.sound=t.checked;save()}
+});
+document.addEventListener('input',function(e){var t=e.target;
+  if(t.id==='csearch'){chatQ=t.value;var m=$('#msgs');if(m)m.innerHTML=bubbles()}
+  if(t.id==='mq'){memQ=t.value;var p=t.selectionStart;render();var n=$('#mq');if(n){n.focus();n.setSelectionRange(p,p)}}
+  if(t.id==='fsz'){S.font=+t.value;save();applyLook()}
+});
+document.addEventListener('keydown',function(e){if(e.key!=='Enter')return;if(e.target.id==='ctext'){e.preventDefault();A.send()}else if(e.target.closest&&e.target.closest('#aform')){e.preventDefault();var b=$('#aform [data-a^="do"]');if(b)b.click()}});
+document.addEventListener('submit',function(e){e.preventDefault()});
+setInterval(function(){var now=Date.now(),due=S.sched.filter(function(s){return s.at<=now});if(due.length){due.forEach(function(s){var mm={id:uid(),from:s.from,text:s.text,t:s.at};S.msgs.push(mm);syncMsg(mm)});S.sched=S.sched.filter(function(s){return s.at>now});save();if(S.page==='chat')render();else toast('A scheduled message was sent')}},15000);
+
+/* ===== BuBu gift edition: media, private sync, chat upgrades, vault, PIN ===== */
+var DBH=null,MEDIA={};
+function idb(){return new Promise(function(res,rej){if(DBH)return res(DBH);if(!window.indexedDB)return rej(new Error('no idb'));var r=indexedDB.open('bubu_media',1);r.onupgradeneeded=function(){r.result.createObjectStore('m')};r.onsuccess=function(){DBH=r.result;res(DBH)};r.onerror=function(){rej(r.error)}})}
+function mPut(id,blob){return idb().then(function(d){return new Promise(function(res,rej){var t=d.transaction('m','readwrite');t.objectStore('m').put(blob,id);t.oncomplete=function(){MEDIA[id]=URL.createObjectURL(blob);res(id)};t.onerror=function(){rej(t.error)}})})}
+function mBlob(id){return idb().then(function(d){return new Promise(function(res){var q=d.transaction('m','readonly').objectStore('m').get(id);q.onsuccess=function(){res(q.result||null)};q.onerror=function(){res(null)}})}).catch(function(){return null})}
+function mLoadAll(){return idb().then(function(d){return new Promise(function(res){var req=d.transaction('m','readonly').objectStore('m').openCursor();req.onsuccess=function(){var c=req.result;if(c){if(!MEDIA[c.key])MEDIA[c.key]=URL.createObjectURL(c.value);c.continue()}else res()};req.onerror=function(){res()}})}).catch(function(){})}
+function mu(r){if(!r)return '';r=String(r);if(r.slice(0,2)==='m:')return MEDIA[r.slice(2)]||'';return r}
+function blobB64(b){return new Promise(function(res){var f=new FileReader();f.onload=function(){res(String(f.result).split(',')[1]||'')};f.readAsDataURL(b)})}
+function b64(buf){var a=new Uint8Array(buf),s='',i=0;for(;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.subarray(i,i+8192));return btoa(s)}
+function unb64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function b64Blob(s,type){return new Blob([unb64(s)],{type:type||'application/octet-stream'})}
+function saveImg(file,cb){shrink(file,function(du){fetch(du).then(function(r){return r.blob()}).then(function(b){var id=uid();return mPut(id,b).then(function(){cb('m:'+id)})}).catch(function(){cb(du)})})}
+function saveFile(file,cb){var id=uid();mPut(id,file).then(function(){cb('m:'+id)}).catch(function(){toast('Could not store that file on this phone.')})}
+function packMedia(refs){var seen={},ids=[];refs.forEach(function(r){r=r&&String(r);if(r&&r.slice(0,2)==='m:'&&!seen[r]){seen[r]=1;ids.push(r.slice(2))}});return Promise.all(ids.map(function(id){return mBlob(id).then(function(b){return b?blobB64(b).then(function(x){return {id:id,type:b.type,b:x}}):null})})).then(function(a){return a.filter(Boolean)})}
+function importMedia(list){return Promise.all((list||[]).map(function(m){if(MEDIA[m.id])return 0;return mPut(m.id,b64Blob(m.b,m.type))}))}
+function findMsg(id){return S.msgs.filter(function(x){return x.id===id})[0]}
+function fill(s){return String(s==null?'':s).replace(/\{her\}/g,nm('b')).replace(/\{me\}/g,nm('a'))}
+
+/* ---- backup vault ---- */
+function allMedia(){return idb().then(function(d){return new Promise(function(res){var out=[],req=d.transaction('m','readonly').objectStore('m').openCursor();req.onsuccess=function(){var c=req.result;if(c){out.push([c.key,c.value]);c.continue()}else res(out)};req.onerror=function(){res(out)}})}).catch(function(){return []})}
+function doBackup(){allMedia().then(function(items){return Promise.all(items.map(function(it){return blobB64(it[1]).then(function(b){return {id:it[0],type:it[1].type,b:b}})}))}).then(function(media){var blob=new Blob([JSON.stringify({app:'bubu',v:2,t:Date.now(),state:S,media:media})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bubu-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500);S.lastBackup=Date.now();save();toast('Backup saved. Keep this file private.');render()}).catch(function(){toast('Backup failed. Try again.')})}
+function doRestore(file){var r=new FileReader();r.onload=function(){var o;try{o=JSON.parse(r.result)}catch(e){return toast('That is not a BuBu backup file.')}if(!o||o.app!=='bubu'||!o.state)return toast('That is not a BuBu backup file.');importMedia(o.media).then(function(){S=Object.assign(def(),o.state);save();render();toast('Backup restored.');syncStart()})};r.readAsText(file)}
+
+/* ---- private sync: Firebase Realtime Database over REST + SSE, AES-GCM encrypted on the phone ---- */
+var syncSt='off',peerAt=0,syncKey=null,es=null,pollI=null,flushing=false;
+function syncOn(){return !!(S.sync&&S.sync.on&&S.sync.u&&S.sync.r&&S.sync.k)}
+function syncLabel(){if(!syncOn())return 'This phone only';return syncSt==='ok'?'Synced':syncSt==='err'?'Offline, will retry':'Connecting...'}
+function setSync(s){syncSt=s;var e=$('#syncpill');if(e)e.textContent=syncLabel()}
+function peerTxt(){if(!syncOn())return 'Connect the phones in Profile to see online status';if(!peerAt)return 'Not seen yet';var d=Date.now()-peerAt;if(d<9e4)return 'Online now';var m=Math.round(d/6e4);return 'Last seen '+(m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':fmtDate(peerAt))}
+function dbUrl(p){return S.sync.u.replace(/\/+$/,'')+'/r/'+S.sync.r+p+'.json'}
+function dbPut(p,val){return fetch(dbUrl(p),{method:'PUT',body:JSON.stringify(val)})}
+function dbGet(p){return fetch(dbUrl(p)).then(function(r){return r.json()})}
+function skey(){if(syncKey)return Promise.resolve(syncKey);var sy=S.sync;return crypto.subtle.importKey('raw',te.encode(sy.k),'PBKDF2',false,['deriveKey']).then(function(k){return crypto.subtle.deriveKey({name:'PBKDF2',salt:te.encode('bubu:'+sy.r),iterations:120000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}).then(function(k){syncKey=k;return k})}
+function encO(o){return skey().then(function(k){var iv=rndBytes(12);return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,te.encode(JSON.stringify(o))).then(function(ct){var out=new Uint8Array(12+ct.byteLength);out.set(iv);out.set(new Uint8Array(ct),12);return b64(out)})})}
+function decO(s){return skey().then(function(k){var a=unb64(s);return crypto.subtle.decrypt({name:'AES-GCM',iv:a.subarray(0,12)},k,a.subarray(12))}).then(function(pt){return JSON.parse(new TextDecoder().decode(pt))})}
+function pairOf(o){return 'BUBU.'+btoa(JSON.stringify({u:o.u,r:o.r,k:o.k})).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function parsePair(c){try{var s=String(c).trim().replace(/^BUBU\./i,'').replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var o=JSON.parse(atob(s));if(o&&o.u&&o.r&&o.k&&/^(https:\/\/|http:\/\/(localhost|127\.0\.0\.1)(:|\/|$))/.test(o.u))return o}catch(e){}return null}
+function qAdd(id,del){S.q=(S.q||[]).filter(function(x){return x.id!==id});S.q.push({id:id,del:del?1:0,t:Date.now()});save();flushQ()}
+function syncMsg(m){if(syncOn())qAdd(m.id,0)}
+function syncDel(id){if(syncOn())qAdd(id,1)}
+function flushQ(){
+  if(!syncOn()||flushing||!S.q||!S.q.length||!navigator.onLine)return;
+  flushing=true;var it=S.q[0];
+  var done=function(ok){flushing=false;if(ok){S.q=S.q.filter(function(x){return !(x.id===it.id&&x.t===it.t)});save();setSync('ok')}else setSync('err');if(ok&&S.q.length)flushQ()};
+  var p;
+  if(it.del)p=encO({m:{id:it.id,del:1,t:it.t},media:[]});
+  else{var m=findMsg(it.id);if(!m){done(true);return}
+    p=packMedia([m.img,m.aud]).then(function(media){var mm=Object.assign({},m);delete mm.seen;return encO({m:mm,media:media})})}
+  Promise.resolve(p).then(function(c){return dbPut('/m/'+it.id,c)}).then(function(r){done(r.ok)}).catch(function(){done(false)})
+}
+function refreshChat(){if(S.page==='chat'){var b=$('#msgs');if(b){b.innerHTML=bubbles();b.scrollTop=b.scrollHeight}}else if(S.page==='home')render()}
+function applyRemote(m){
+  if(!m||!m.id)return;var idx=-1;
+  for(var i=0;i<S.msgs.length;i++)if(S.msgs[i].id===m.id){idx=i;break}
+  if(m.del){if(idx>-1){S.msgs.splice(idx,1);save();refreshChat()}return}
+  if(idx>-1){m.seen=S.msgs[idx].seen;S.msgs[idx]=m;save();refreshChat();return}
+  if(m.exp&&m.exp<Date.now())return;
+  var mine=m.from===S.me;if(!mine)m.seen=(S.page==='chat')?1:0;
+  S.msgs.push(m);save();
+  if(!mine&&Date.now()-m.t<3e5){ding();if(/^📳/.test(m.text||'')){try{navigator.vibrate&&navigator.vibrate([200,80,200,80,300])}catch(e){}hearts(8)}toast(nm(m.from)+': '+(m.text?m.text.slice(0,40):m.aud?'voice note':'photo'))}
+  refreshChat()
+}
+function remoteMsg(c){if(!c||typeof c!=='string')return;decO(c).then(function(o){return importMedia(o.media).then(function(){applyRemote(o.m)})}).catch(function(){})}
+function onEv(e){var d;try{d=JSON.parse(e.data)}catch(x){return}if(!d)return;var p=d.path,v=d.data;if(p==='/'){if(v&&typeof v==='object')Object.keys(v).forEach(function(k){remoteMsg(v[k])})}else if(p&&p.length>1){remoteMsg(v)}}
+function syncStart(){
+  try{if(es){es.close();es=null}}catch(e){}
+  clearInterval(pollI);syncKey=null;
+  if(!syncOn()){setSync('off');return}
+  setSync('conn');
+  try{es=new EventSource(dbUrl('/m'));es.addEventListener('put',onEv);es.addEventListener('patch',onEv);es.onopen=function(){setSync('ok')};es.onerror=function(){setSync('err')}}catch(e){setSync('err')}
+  pollI=setInterval(poll,30000);poll();flushQ()
+}
+function poll(){
+  if(!syncOn())return;
+  if(document.visibilityState!=='hidden')fetch(dbUrl('/pr/'+S.me),{method:'PUT',body:String(Date.now())}).catch(function(){});
+  dbGet('/pr/'+other()).then(function(t){if(typeof t==='number'){peerAt=t;var e=$('#peer');if(e)e.textContent=peerTxt()}}).catch(function(){});
+  dbGet('/p').then(function(c){if(c)return decO(c).then(applyProfile)}).catch(function(){});
+  if(S.me==='b')dbGet('/gv').then(function(v){if(typeof v==='number'&&v>(S.gift.pubAt||0))pullGift(v)}).catch(function(){});
+  flushQ()
+}
+function pushProfile(){if(!syncOn())return;S.pt=Date.now();save();encO({names:S.names,since:S.since,bd:S.bd,tz:S.tz,pt:S.pt}).then(function(c){return dbPut('/p',c)}).catch(function(){})}
+function applyProfile(o){if(!o||(o.pt||0)<=(S.pt||0))return;S.names=o.names||S.names;S.since=o.since||S.since;S.bd=o.bd||S.bd;S.tz=o.tz||S.tz;S.pt=o.pt;save();if(S.page==='home'||S.page==='profile')render()}
+function publishGift(){
+  if(!syncOn())return toast('Connect the two phones first (Profile, Connect our phones).');
+  var g=JSON.parse(JSON.stringify(S.gift));delete g.seen;
+  var refs=[g.music,g.final&&g.final.voice].concat((g.story||[]).map(function(s){return s.img}));
+  toast('Publishing. Photos can take a moment...');
+  packMedia(refs).then(function(media){return encO({gift:g,media:media})}).then(function(c){var v=Date.now();return dbPut('/g',c).then(function(r){if(!r.ok)throw 0;return dbPut('/gv',v)}).then(function(r){if(!r.ok)throw 0;S.gift.pubAt=v;save();pushProfile();toast('Gift published to her phone ✓');render()})}).catch(function(){toast('Publish failed. Check the database URL and rules.')})
+}
+function pullGift(v){
+  dbGet('/g').then(function(c){return c?decO(c):null}).then(function(o){if(!o)return;return importMedia(o.media).then(function(){var seen=S.gift.seen||{reasons:{},letters:{}};S.gift=Object.assign(giftDef(),o.gift);S.gift.seen=seen;S.gift.pubAt=v;save();toast('A gift just arrived 🎁');if(S.page==='home')render()})}).catch(function(){})
+}
+function joinPair(code){
+  if(authBusy)return;var now=Date.now();
+  if(S.auth.lockUntil>now)return authErr('Too many attempts. Wait '+Math.ceil((S.auth.lockUntil-now)/1000)+' seconds.');
+  var pc=parsePair(code);if(!pc){failAuth();return authErr('That pairing code is not valid. Copy it again from his phone.')}
+  var n=v('anm'),em=v('aem'),p=raw('apw');
+  if(!n)return authErr('Enter your name.');
+  if(!/^\S+@\S+\.\S+$/.test(em))return authErr('Enter a valid email address.');
+  if(p.length<8)return authErr('Use at least 8 characters for the password.');
+  if(!hasCrypto())return authErr('Secure hashing is blocked here. Open the app over https.');
+  authBusy=true;authErr('Joining...');
+  mkAcct(n,em,p).then(function(ac){S.auth.partner=ac;S.auth.owner={name:'Him',email:'',salt:'00',hash:'00'};S.names.a='Him';S.names.b=n;S.sync={u:pc.u,r:pc.r,k:pc.k,on:true};S.auth.session={who:'b',at:Date.now()};logEv('Joined with pairing code','b');save();authBusy=false;render();syncStart();hearts(14)}).catch(function(){authBusy=false;authErr('Something went wrong. Try again.')})
+}
+
+/* ---- chat upgrades ---- */
+function sendMsg(o){var m=Object.assign({id:uid(),from:S.me,t:Date.now()},o);if(S.dis)m.exp=Date.now()+S.dis*1000;S.msgs.push(m);save();syncMsg(m);return m}
+function purge(){var n=Date.now(),l=S.msgs.length;S.msgs=S.msgs.filter(function(m){return !m.exp||m.exp>n});if(S.msgs.length!==l)save()}
+var GM=['Good morning, my love ☀️ Today will be kind to you, because you deserve it.','Good morning. I hope your day feels as warm as you make mine.','Wake up, sunshine. Someone is already thinking of you.','Good morning. Drink some water, smile once, and know I am proud of you.'];
+var GN=['Good night, my love 🌙 Rest well. I am only a message away.','Good night. Tomorrow will be easier because you are in my life.','Sleep tight. I will dream of the next time we laugh together.','Good night. Thank you for today. I love you.'];
+var rec=null;
+function setRecUi(on){['recbtn','recbtn2'].forEach(function(i){var b=document.getElementById(i);if(b)b.textContent=on?'■ Stop':(i==='recbtn'?'🎙 Voice note':'🎙 Record voice message')});if(on)toast('Recording... tap again to stop.')}
+function recDone(ref,tg,sec){if(tg==='chat'){sendMsg({aud:ref,text:'',dur:sec});ding();render()}else if(tg==='final'){S.gift.final.voice=ref;S.gift.sample=S.gift.sample||{};save();render();toast('Voice message saved.')}}
+function recToggle(target){
+  if(rec){rec.mr.stop();return}
+  if(!navigator.mediaDevices||!window.MediaRecorder)return toast('Recording is not available here.');
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+    var ch=[],mr=new MediaRecorder(st),t0=Date.now();rec={mr:mr,target:target};setRecUi(true);
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)ch.push(e.data)};
+    mr.onstop=function(){st.getTracks().forEach(function(t){t.stop()});if(rec)clearTimeout(rec.to);rec=null;setRecUi(false);if(!ch.length)return;var b=new Blob(ch,{type:mr.mimeType||'audio/webm'}),id=uid();mPut(id,b).then(function(){recDone('m:'+id,target,Math.round((Date.now()-t0)/1000))})};
+    mr.start();rec.to=setTimeout(function(){if(rec)rec.mr.stop()},180000)
+  }).catch(function(){toast('Microphone permission is off.')})
+}
+
+/* ---- PIN lock ---- */
+function pinScreen(){
+  $('#view').innerHTML='<div style="min-height:80vh;display:grid;place-items:center"><div class="card glow" id="pincard" style="width:100%;max-width:340px;text-align:center"><div class="brand" style="justify-content:center">BuBu</div><p class="mut">Enter your PIN</p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" style="text-align:center;font-size:1.4rem;letter-spacing:.4em"><div id="aerr" role="alert" style="color:var(--bad);font-size:.85rem"></div><button class="btn pri" data-a="pinGo">Unlock</button></div></div>';
+  setTimeout(function(){var i=$('#pinin');if(i)i.focus()},50)
+}
+
+/* ===== Birthday gift experience ===== */
+function giftDef(){return{unlock:'2026-11-21',intro:'',reasons:[],story:[],letters:[],coupons:[],final:{text:'',voice:''},music:'',secret:'',hp:null,seen:{reasons:{},letters:{}},sample:{},pubAt:0,opened:0}}
+var DEFAULT_INTRO='Make your wish. I already know mine includes you.';
+var SAMPLE={
+ reasons:['The way you laugh makes my whole day lighter.','You listen, even when I am just rambling.','You make ordinary evenings feel like celebrations.','Your kindness shows up in the smallest things.','You believe in me on the days I forget to.','Your voice is my favourite sound.','You are braver than you know.','With you, silence is comfortable.','You turned someday into together.','You make me want to be a better person.','Home feels like wherever you are.','I get to love you, and that is the best thing I do.'],
+ letters:[
+  ['Open when you miss me','{her}, I miss you too, probably at the very same moment. Close your eyes and think of the last time we laughed until it hurt. That is where I am right now. Send me a message and I will answer, always.'],
+  ['Open when you feel sad','It is okay to feel low. You do not have to be strong for me. Breathe, drink some water, and remember that every hard day has ended so far. I am on your side, {her}, even when words are hard.'],
+  ['Open when you cannot sleep','Put the phone down after this, and imagine my hand in yours. Slow breaths. Tomorrow can wait. I will be thinking of you until you drift off.'],
+  ['Open when you doubt yourself','You are enough, {her}. I have watched you grow, push through, and care without being asked. The person I see is someone I admire deeply. Please believe me when you cannot believe yourself.'],
+  ['Open when you are happy','Then I am happy too. Take a screenshot of this feeling and send it to me. I want to celebrate everything with you, big or small.']],
+ coupons:['One dinner of your choice','A long call, no phone checking','A forgiven mistake (use wisely)','A song dedicated to you','One movie night, your pick','A handwritten letter'],
+ final:'Happy birthday, {her}.\n\nI made this app with my own hands so that we always have one place that is only ours. Every message we send here stays between us, today and for all the years ahead.\n\nThank you for being you. Here is to every birthday still to come, together.\n\n— {me}'
+};
+var GSTEPS=[['cake','Wish','Make a wish'],['reasons','Reasons','Reasons I love you'],['story','Story','Our story'],['letters','Letters','Open when...'],['coupons','Coupons','Just for you'],['heart','Surprise','One last thing']];
+var gStep=0,blown=false,gPrev=false,storyIdx=0,storyI=null,storyPlay=false,bgm=null,tickI=null,GS={};
+function giftLocked(){return Date.now()<new Date(S.gift.unlock+'T00:00:00').getTime()}
+function fmtLong(iso){return new Date(iso+'T00:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+', 12:00 AM'}
+function gs(k){S.gift.seen=S.gift.seen||{};S.gift.seen[k]=S.gift.seen[k]||{};return S.gift.seen[k]}
+function cdParts(){var ms=Math.max(0,new Date(S.gift.unlock+'T00:00:00').getTime()-Date.now()),s=Math.floor(ms/1000);return{ms:ms,d:Math.floor(s/86400),h:Math.floor(s%86400/3600),m:Math.floor(s%3600/60),s:s%60}}
+function cdHtml(r){function b(n,l){return '<div><b>'+String(n).padStart(2,'0')+'</b><span>'+l+'</span></div>'}return b(r.d,'days')+b(r.h,'hours')+b(r.m,'mins')+b(r.s,'secs')}
+function giftReady(){
+  var g=S.gift,L=g.letters.filter(function(l){return l.b}).length,sm=g.sample||{};
+  var items=[
+   ['Her name set',S.names.b&&S.names.b!=='Her',''],
+   ['Reasons (5 or more)',g.reasons.length>=5,sm.reasons?'Sample text: replace with your own words':g.reasons.length+' written'],
+   ['Story photos (3 or more)',g.story.length>=3,g.story.length+' added'],
+   ['Open-when letters (3 or more)',L>=3,sm.letters?'Sample text: replace with your own words':L+' written'],
+   ['Coupons (3 or more)',g.coupons.length>=3,sm.coupons?'Sample text: replace with your own words':g.coupons.length+' added'],
+   ['Final message',!!(g.final&&g.final.text),sm.final?'Sample text: replace with your own words':''],
+   ['Voice message (optional but magical)',!!(g.final&&g.final.voice),'']
+  ];
+  return{items:items,ok:items.filter(function(i){return i[1]}).length,total:items.length}
+}
+function giftCard(){
+  var g=S.gift,lk=giftLocked(),her=nm('b');
+  if(S.me==='a'){var r=giftReady();return '<div class="card glow"><div class="lab">Birthday gift for '+esc(her)+'</div><b>'+(lk?'Opens '+esc(fmtLong(g.unlock)):'Her gift is open now')+'</b><div class="mut">Ready: '+r.ok+' of '+r.total+' parts'+(syncOn()?'':' · phones not connected yet')+'</div><div class="row"><button class="btn pri" data-a="go" data-p="world" data-v="studio">Gift Studio</button><button class="btn" data-a="previewGift">Preview as her</button></div></div>'}
+  if(lk)return '<div class="card glow" style="text-align:center"><div class="lab">A gift is waiting for you</div><div class="cd" id="gcdH"></div><div class="mut">Opens '+esc(fmtLong(g.unlock))+'</div></div>';
+  return '<div class="card glow" style="text-align:center"><h2>Your gift is ready 🎁</h2><button class="btn pri" data-a="openGift">Open your gift</button></div>'
+}
+function lockScreen(){return '<div class="col" style="align-items:center;text-align:center;min-height:70vh;justify-content:center;gap:18px"><div style="font-size:3.2rem">🎁</div><h1>For '+esc(nm('b'))+'</h1><p class="mut">Something was made just for you. It opens on<br><b style="color:var(--tx)">'+esc(fmtLong(S.gift.unlock))+'</b></p><div class="cd" id="gcd"></div><p class="mut">Come back when the clock reaches zero.</p><button class="btn" data-a="go" data-p="home">Back</button></div>'}
+P.gift=function(){if(giftLocked()&&!(S.me==='a'&&gPrev))return lockScreen();return '<div id="gwrap">'+giftInner()+'</div>'};
+function giftInner(){
+  var st=GSTEPS[gStep];
+  return '<div class="row sb"><button class="btn sm" data-a="giftExit">‹ Exit</button><div class="row">'+GSTEPS.map(function(x,i){return '<span style="width:8px;height:8px;border-radius:50%;background:'+(i===gStep?'var(--pk)':'var(--line)')+'"></span>'}).join('')+'</div></div>'+(gPrev?'<div class="row" style="justify-content:center"><span class="pill demo">Preview · she sees this on '+esc(fmtLong(S.gift.unlock))+'</span></div>':'')+'<div class="col" style="gap:14px"><h1 style="text-align:center">'+esc(st[2])+'</h1>'+GS[st[0]]()+'</div><div class="row sb"><button class="btn" data-a="gBack"'+(gStep===0?' disabled':'')+'>Back</button><button class="btn pri" data-a="gNext"'+(gStep===GSTEPS.length-1?' disabled':'')+'>Next</button></div>'
+}
+function gGo(n){clearInterval(storyI);storyPlay=false;if(bgm)bgm.pause();gStep=Math.max(0,Math.min(GSTEPS.length-1,n));var w=$('#gwrap');if(w){w.innerHTML=giftInner();postGift();window.scrollTo(0,0)}}
+function refreshGiftInner(){var w=$('#gwrap');if(w){w.innerHTML=giftInner();postGift()}}
+
+/* step 1: cake */
+function cakeSvg(){
+  var xs=[84,108,132,156,180];
+  return '<svg id="cake" class="'+(blown?'out':'')+'" viewBox="0 0 264 250" width="260" height="246" role="img" aria-label="Birthday cake with candles"><ellipse cx="132" cy="228" rx="112" ry="14" fill="rgba(0,0,0,.25)"/><rect x="26" y="150" width="212" height="72" rx="14" fill="#FF6FAE"/><rect x="26" y="150" width="212" height="18" rx="9" fill="#fff" opacity=".85"/><rect x="56" y="100" width="152" height="56" rx="12" fill="#9B5CFF"/><rect x="56" y="100" width="152" height="16" rx="8" fill="#fff" opacity=".85"/>'+
+  xs.map(function(x,i){return '<rect x="'+(x-4)+'" y="68" width="8" height="36" rx="3" fill="'+(i%2?'#FFC857':'#5FD3A0')+'"/><path class="flame" d="M'+x+' 40 c-9 11 -9 19 0 26 c9 -7 9 -15 0 -26z" fill="#FFB347"/><path class="flame" d="M'+x+' 50 c-4 6 -4 10 0 13 c4 -3 4 -7 0 -13z" fill="#FFF3B0"/>'}).join('')+'</svg>'
+}
+function cakeDone(){return '<b style="color:var(--tx);font-size:1.2rem">Happy Birthday, '+esc(nm('b'))+'! 🎂</b><br>'+esc(fill(S.gift.intro||DEFAULT_INTRO))}
+GS.cake=function(){return '<div class="col" style="align-items:center;text-align:center">'+cakeSvg()+'<div id="cakemsg" class="mut">'+(blown?cakeDone():'Make a wish, '+esc(nm('b'))+'. Then blow out the candles.')+'</div>'+(blown?'':'<div class="row" id="cakebtns" style="justify-content:center"><button class="btn pri" data-a="blowMic">🎤 Blow into the mic</button><button class="btn" data-a="blowTap">Tap to blow</button></div>')+'</div>'};
+function blowOut(){if(blown)return;blown=true;var c=$('#cake');if(c)c.classList.add('out');var m=$('#cakemsg');if(m)m.innerHTML=cakeDone();var b=$('#cakebtns');if(b)b.remove();hearts(18);ding()}
+function startBlow(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Microphone not available. Tap to blow instead.');return}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+    var ac=new (window.AudioContext||window.webkitAudioContext)(),src=ac.createMediaStreamSource(st),an=ac.createAnalyser();an.fftSize=512;src.connect(an);
+    var buf=new Uint8Array(an.fftSize),hot=0;toast('Blow gently towards the microphone');
+    (function lp(){
+      if(!$('#cake')||blown){st.getTracks().forEach(function(t){t.stop()});try{ac.close()}catch(e){}return}
+      an.getByteTimeDomainData(buf);var s=0;for(var i=0;i<buf.length;i++){var x=(buf[i]-128)/128;s+=x*x}
+      var rms=Math.sqrt(s/buf.length);hot=rms>.14?hot+1:Math.max(0,hot-1);
+      if(hot>8){blowOut();return}
+      requestAnimationFrame(lp)
+    })()
+  }).catch(function(){toast('Microphone permission is off. Tap to blow instead.')})
+}
+
+/* step 2: scratch cards */
+GS.reasons=function(){
+  var R=S.gift.reasons||[];if(!R.length)return empty('No reasons yet','Add them in the Gift Studio.');
+  var sn=gs('reasons'),done=Object.keys(sn).length;
+  return '<p class="mut" style="text-align:center" id="rcount">Scratch each card. '+done+' of '+R.length+' found.</p><div class="scrs">'+R.map(function(r,i){return '<div class="scr"><span class="n">#'+(i+1)+'</span><div style="font-family:var(--f-d);font-size:1.05rem">'+esc(fill(r))+'</div>'+(sn[i]?'':'<canvas data-i="'+i+'"></canvas>')+'</div>'}).join('')+'</div>'
+};
+function initScratch(cv){
+  var r=cv.getBoundingClientRect(),W=cv.width=Math.max(80,Math.round(r.width)),H=cv.height=Math.max(80,Math.round(r.height)),c=cv.getContext('2d');
+  var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#9B5CFF');g.addColorStop(1,'#FF6FAE');c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.fillStyle='rgba(255,255,255,.9)';c.font='600 14px Manrope,sans-serif';c.textAlign='center';c.fillText('Scratch me 💜',W/2,H/2+5);
+  c.globalCompositeOperation='destination-out';c.fillStyle='#000';var d=false,cnt=0,fin=false;
+  function pos(e){var b=cv.getBoundingClientRect();return[(e.clientX-b.left)*W/b.width,(e.clientY-b.top)*H/b.height]}
+  function dot(e){var p=pos(e);c.beginPath();c.arc(p[0],p[1],20,0,7);c.fill();if(++cnt%6===0)check()}
+  function check(){if(fin)return;var im=c.getImageData(0,0,W,H).data,t=0,n=0;for(var i=3;i<im.length;i+=24){n++;if(im[i]<20)t++}if(t/n>.45){fin=true;cv.style.transition='opacity .5s';cv.style.opacity=0;setTimeout(function(){cv.style.display='none'},520);reasonSeen(+cv.dataset.i)}}
+  cv.onpointerdown=function(e){d=true;cv.setPointerCapture(e.pointerId);dot(e)};
+  cv.onpointermove=function(e){if(d)dot(e)};
+  cv.onpointerup=function(){d=false;check()};
+  cv.onpointercancel=function(){d=false}
+}
+function reasonSeen(i){var sn=gs('reasons');if(sn[i])return;sn[i]=1;save();var R=S.gift.reasons,n=Object.keys(sn).length,e=$('#rcount');if(e)e.textContent='Scratch each card. '+n+' of '+R.length+' found.';hearts(3);if(n===R.length){toast('You found every reason 💜');hearts(14)}}
+
+/* step 3: story movie */
+function storyList(){return (S.gift.story||[]).slice().sort(function(a,b){return (a.d||'').localeCompare(b.d||'')})}
+function storyHtml(){
+  var L=storyList(),s=L[storyIdx%L.length];
+  var segs=L.map(function(x,i){return '<i class="'+(i<storyIdx?'done':i===storyIdx&&storyPlay?'cur':'')+'"><b></b></i>'}).join('');
+  return '<div class="story'+(storyPlay?'':' paused')+'"><div class="segs">'+segs+'</div>'+(s.img?'<div class="bgimg" style="background-image:url(\''+mu(s.img)+'\')"></div>':'')+'<div class="cap">'+(s.d?'<div class="lab" style="color:#fff;opacity:.8">'+esc(fmtDate(s.d+'T00:00:00'))+'</div>':'')+'<div style="font-family:var(--f-d);font-size:1.3rem">'+esc(fill(s.c||''))+'</div></div></div>'
+}
+GS.story=function(){
+  var L=storyList();if(!L.length)return empty('Our story is still being written','Add photos in the Gift Studio.');
+  return '<div id="storybox">'+storyHtml()+'</div><div class="row" style="justify-content:center"><button class="btn" data-a="stPrev">‹</button><button class="btn pri" data-a="stPlay" id="stplay">'+(storyPlay?'Pause':'Play our story')+'</button><button class="btn" data-a="stNext">›</button></div>'
+};
+function storyGo(i){var L=storyList();if(!L.length)return;storyIdx=(i+L.length)%L.length;var b=$('#storybox');if(b)b.innerHTML=storyHtml()}
+function storyTimer(){clearInterval(storyI);storyI=setInterval(function(){var L=storyList();if(storyIdx>=L.length-1){storyPlay=false;clearInterval(storyI);storyGo(storyIdx);var p=$('#stplay');if(p)p.textContent='Replay';if(bgm)bgm.pause();toast('The end... for now 💜');hearts(8);return}storyGo(storyIdx+1)},5000)}
+function audioPlay(){if(!S.gift.music||!mu(S.gift.music))return;if(!bgm){bgm=new Audio(mu(S.gift.music));bgm.loop=true}var p=bgm.play();if(p&&p.catch)p.catch(function(){})}
+
+/* step 4: open-when letters */
+GS.letters=function(){
+  var L=S.gift.letters.filter(function(l){return l.b});if(!L.length)return empty('No letters yet','Write them in the Gift Studio.');
+  var sn=gs('letters');
+  return '<p class="mut" style="text-align:center">Open the one that matches how you feel right now.</p><div class="grid sm">'+L.map(function(l){return '<button class="card" style="cursor:pointer;color:inherit;text-align:center;align-items:center" data-a="gLetter" data-id="'+l.id+'"><div style="font-size:2rem">'+(sn[l.id]?'💌':'✉️')+'</div><b>'+esc(l.t)+'</b></button>'}).join('')+'</div>'
+};
+
+/* step 5: coupons */
+GS.coupons=function(){
+  var C=S.gift.coupons||[];if(!C.length)return empty('No coupons yet','Add them in the Gift Studio.');
+  return '<p class="mut" style="text-align:center">Redeem one whenever you like. He gets a message.</p><div class="list">'+C.map(function(c){return '<div class="item" style="border-style:dashed"><div><b>'+esc(fill(c.t))+'</b>'+(c.red?'<div class="mut">Redeemed '+esc(fmtDate(c.red))+'</div>':'')+'</div>'+(c.red?'<span class="chip">used</span>':'<button class="btn sm pri" data-a="redeem" data-id="'+c.id+'">Redeem</button>')+'</div>'}).join('')+'</div>'
+};
+
+/* step 6: hidden heart */
+function heartPos(){var g=S.gift;if(!g.hp){g.hp={x:12+Math.floor(Math.random()*76),y:14+Math.floor(Math.random()*72)};save()}return g.hp}
+GS.heart=function(){var hp=heartPos();return '<p class="mut" style="text-align:center">Something is hiding in this sky. Tap around and I will tell you if you are cold or warm.</p><div class="hsky" id="hsky"><span id="hheart" style="position:absolute;left:'+hp.x+'%;top:'+hp.y+'%;font-size:1.4rem;opacity:.12;transform:translate(-50%,-50%)">💜</span></div><div id="hhint" class="mut" style="text-align:center">Tap anywhere.</div>'};
+function initHeart(sky){
+  sky.onclick=function(e){
+    var b=sky.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*100,y=(e.clientY-b.top)/b.height*100,hp=S.gift.hp,asp=b.height/b.width;
+    var dx=x-hp.x,dy=(y-hp.y)*asp,dist=Math.sqrt(dx*dx+dy*dy);
+    var sp=document.createElement('span');sp.textContent='✨';sp.style.cssText='position:absolute;left:'+x+'%;top:'+y+'%;transform:translate(-50%,-50%);transition:opacity 1s;pointer-events:none';sky.appendChild(sp);setTimeout(function(){sp.style.opacity=0},50);setTimeout(function(){sp.remove()},1100);
+    if(dist<6){var h=$('#hheart');if(h)h.style.opacity=1;finale();return}
+    var t=dist<12?'Burning hot 🔥':dist<22?'Hot':dist<38?'Warm':dist<55?'Cool':'Cold ❄️',e2=$('#hhint');if(e2)e2.textContent=t
+  }
+}
+function finale(){
+  if(!gPrev){S.gift.opened=Date.now();save()}hearts(22);ding();
+  var f=S.gift.final||{};
+  modal('<div class="letter-open" style="text-align:center"><div style="font-size:2.4rem">💜</div><h2>Happy Birthday, '+esc(nm('b'))+'</h2><div style="white-space:pre-wrap;margin:12px 0;text-align:left">'+esc(fill(f.text||''))+'</div>'+(f.voice&&mu(f.voice)?'<audio controls src="'+mu(f.voice)+'" style="width:100%"></audio>':'')+'<div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" data-a="thanks">Say thank you</button><button class="btn" data-a="goChat">Open our chat</button></div></div>')
+}
+function postGift(){
+  document.querySelectorAll('.scr canvas').forEach(initScratch);
+  var sk=$('#hsky');if(sk)initHeart(sk)
+}
+
+/* ===== timers, special days ===== */
+function tzOff(tz){try{var d=new Date(),a=new Date(d.toLocaleString('en-US',{timeZone:tz})),b=new Date(d.toLocaleString('en-US',{timeZone:'UTC'}));return (a-b)/6e4}catch(e){return 0}}
+function clk(tz){try{return new Date().toLocaleTimeString([],{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit'})}catch(e){return '--:--'}}
+function tickFn(){
+  var r=cdParts();['gcd','gcdH'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML=cdHtml(r)});
+  var a=$('#clkA'),b=$('#clkB');if(a)a.textContent=clk(S.tz.a);if(b)b.textContent=clk(S.tz.b);
+  if(r.ms<=0&&($('#gcd')||$('#gcdH'))){clearInterval(tickI);tickI=null;hearts(16);render()}
+}
+function tickClear(){clearInterval(tickI);tickI=null}
+function postX(){
+  if(S.page!=='gift'){if(bgm){bgm.pause();bgm=null}clearInterval(storyI);storyPlay=false}
+  var need=$('#gcd')||$('#gcdH')||$('#clkA');if(need){tickI=setInterval(tickFn,1000);tickFn()}
+  if(S.page==='gift'&&(!giftLocked()||S.me==='a')){document.body.classList.add('locked');postGift()}
+}
+function specialToday(){
+  var n=new Date(),m=n.getMonth()+1,d=n.getDate(),out=[];
+  function is(iso){return iso&&+iso.slice(5,7)===m&&+iso.slice(8,10)===d}
+  if(is(S.since))out.push('Happy anniversary! Another year of us 💜');
+  if(is(S.bd.a))out.push('Happy birthday, '+nm('a')+'!');
+  if(is(S.bd.b))out.push('Happy birthday, '+nm('b')+'!');
+  if(is(S.gift.unlock))out.push('Today is the day of the gift 🎁');
+  if(m===2&&d===14)out.push('Happy Valentine’s Day 💝');
+  if(m===6&&d===13)out.push('Happy BTS debut day, ARMY 💜');
+  if(m===7&&d===9)out.push('Happy ARMY anniversary 💜');
+  MEMBERS.forEach(function(x){if(x.m===m&&x.d===d)out.push('Happy birthday, '+x.n+'! 🎂')});
+  return out
+}
+
+/* ===== pages: home, world, together, recap, studio, profile, security ===== */
+var TZS=['Asia/Kolkata','Asia/Colombo','Asia/Dubai','Asia/Riyadh','Asia/Singapore','Asia/Tokyo','Asia/Seoul','Australia/Sydney','Europe/London','Europe/Paris','America/New_York','America/Toronto','America/Chicago','America/Los_Angeles','UTC'];
+WORLD.unshift(['gift','Birthday gift','Your surprise 🎁'],['studio','Gift Studio','Owner only'],['together','Together','Counter, clocks, ping'],['recap','Our Year in Love','Yearly recap']);
+P.world=function(){
+  if(S.sub&&SUB[S.sub])return back()+SUB[S.sub]();
+  return '<h1>Our World</h1><div class="grid sm">'+WORLD.filter(function(w){return w[0]!=='studio'||S.me==='a'}).map(function(w){var a=w[0]==='gift'?'openGift':'sub';return '<button class="card" style="text-align:left;cursor:pointer;color:inherit;border-radius:18px" data-a="'+a+'" data-v="'+w[0]+'"><h3>'+w[1]+'</h3><span class="mut">'+w[2]+'</span></button>'}).join('')+'</div>'
+};
+P.home=function(){
+  var W=S.widgets,out=[],sp=specialToday();
+  var head='<div class="row sb"><div><h1>Our Universe</h1><p class="mut">'+new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})+'</p></div><button class="btn pri" data-a="surprise">Surprise me</button></div>';
+  if(sp.length)out.push('<div class="card glow" style="text-align:center"><div style="font-size:1.6rem">🎉</div><b>'+esc(sp[0])+'</b>'+(sp[1]?'<div class="mut">'+esc(sp[1])+'</div>':'')+'</div>');
+  out.push(giftCard());
+  if(W.people)out.push('<div class="card glow"><div class="row sb"><div class="row">'+av('a')+'<div><b>'+esc(nm('a'))+'</b><div class="mut">'+(S.me==='a'?'You, on this phone':'Partner')+'</div></div></div><svg width="28" height="28" viewBox="0 0 24 24" style="filter:drop-shadow(0 0 6px var(--pk))"><path fill="var(--pk)" d="'+HEART+'"/></svg><div class="row" style="flex-direction:row-reverse">'+av('b')+'<div style="text-align:right"><b>'+esc(nm('b'))+'</b><div class="mut">'+(S.me==='b'?'You, on this phone':'Partner')+'</div></div></div></div><div class="row"><span class="pill'+(syncOn()?' on':' demo')+'" id="syncpill">'+syncLabel()+'</span><span class="pill" id="peer">'+esc(peerTxt())+'</span></div></div>');
+  if(W.counter){var c='';if(S.since){var d=Math.floor((Date.now()-new Date(S.since+'T00:00:00'))/DAY);var ann=nextAnnual(+S.since.slice(5,7),+S.since.slice(8,10));c='<div class="row" style="gap:24px"><div><div class="big">'+Math.max(d,0)+'</div><div class="lab">days together</div></div><div><div class="big">'+ann+'</div><div class="lab">days to anniversary</div></div></div>'}else c='<div class="row"><label class="f" style="flex:1">Date your story began<input type="date" id="since"></label><button class="btn pri" data-a="setSince">Start counting</button></div>';
+    out.push('<div class="card"><div class="lab">Relationship counter</div>'+c+'</div>')}
+  var q=QUESTIONS[dayIdx()%QUESTIONS.length],lm=LOVE[dayIdx()%LOVE.length];
+  if(W.question)out.push('<div class="card"><div class="lab">Daily question</div><h3>'+esc(q)+'</h3><div class="mut">'+esc(lm)+'</div><div class="row"><button class="btn sm" data-a="askChat">Send to chat</button><button class="btn sm" data-a="grat">Write a gratitude</button><button class="btn sm" data-a="ping">💭 Thinking of you</button></div></div>');
+  if(W.mood){var tm=S.moods.filter(function(m){return dayKey(m.t)===dayKey()});
+    out.push('<div class="card"><div class="lab">Today\'s mood</div>'+(tm.length?'<div class="row">'+tm.map(function(m){return '<span class="pill on">'+m.e+' '+esc(nm(m.by))+': '+esc(m.l)+'</span>'}).join('')+'</div>':'<div class="mut">Nobody has checked in yet.</div>')+'<div class="row"><button class="btn sm" data-a="go" data-p="world" data-v="mood">Check in</button><span class="pill">Streak '+streak()+' day'+(streak()===1?'':'s')+'</span></div></div>')}
+  if(W.sky)out.push('<div class="card"><div class="row sb"><div class="lab">Our night sky</div><span class="mut">'+stars()+' milestone star'+(stars()===1?'':'s')+'</span></div><canvas class="sky" id="skyH" width="640" height="220"></canvas></div>');
+  if(W.army){var nx=nextBirthday();out.push('<div class="card" style="border-color:var(--ac)"><div class="lab">ARMY corner</div><div class="row sb"><div><b>'+esc(nx.n)+'\'s birthday</b><div class="mut">'+nx.days+' day'+(nx.days===1?'':'s')+' away</div></div><button class="btn sm" data-a="go" data-p="world" data-v="army">Open ARMY Zone</button></div></div>')}
+  if(W.stats){var unread=S.msgs.filter(function(m){return m.from!==S.me&&!m.seen}).length;
+    out.push('<div class="grid sm"><div class="card"><div class="big">'+S.msgs.length+'</div><div class="lab">messages</div></div><div class="card"><div class="big">'+S.mem.length+'</div><div class="lab">memories</div></div><div class="card"><div class="big">'+S.letters.length+'</div><div class="lab">letters</div></div><div class="card"><div class="big">'+unread+'</div><div class="lab">unread</div></div></div>')}
+  var up=upcoming().slice(0,3);
+  out.push('<div class="card"><div class="lab">Coming up</div>'+(up.length?'<div class="list">'+up.map(function(e){return '<div class="item"><div><b>'+esc(e.t)+'</b></div><span class="chip">'+(e.days===0?'today':e.days+' d')+'</span></div>'}).join('')+'</div>':empty('Nothing planned yet','Add events in Our World, Plans.'))+'</div>');
+  if(!syncOn()&&S.me==='a')out.splice(sp.length?2:1,0,'<div class="card"><b>Connect her phone</b><p class="mut">Right now chat stays on this phone. Connect the two phones once and your chat lives on both, encrypted.</p><button class="btn pri" data-a="go" data-p="profile">Connect our phones</button></div>');
+  return head+'<div class="grid">'+out.join('')+'</div>'
+};
+SUB.together=function(){
+  var h='<h2>Together</h2>';
+  if(!S.since)h+='<div class="card"><p class="mut">Set the date your story began on Home or in Profile to see the counter.</p></div>';
+  else{
+    var st=new Date(S.since+'T00:00:00'),n=new Date(),y=n.getFullYear()-st.getFullYear(),m=n.getMonth()-st.getMonth(),d=n.getDate()-st.getDate();
+    if(d<0){m--;d+=new Date(n.getFullYear(),n.getMonth(),0).getDate()}if(m<0){y--;m+=12}
+    var tot=Math.max(0,Math.floor((n-st)/DAY));
+    h+='<div class="card glow"><div class="lab">We have been together for</div><div class="big">'+y+'y '+m+'m '+d+'d</div><div class="mut">'+tot+' days · '+Math.floor(tot/7)+' weeks · '+(tot*24).toLocaleString()+' hours</div></div>';
+    var ms=[100,200,365,500,730,1000,1095,1461,1826,3652].filter(function(x){return x>tot}).slice(0,3);
+    h+='<div class="card"><div class="lab">Next milestones</div><div class="list">'+ms.map(function(x){return '<div class="item"><div>Day '+x+'</div><span class="chip">in '+(x-tot)+' d</span></div>'}).join('')+'</div></div>'
+  }
+  function sel(id,cur){return '<select id="'+id+'">'+TZS.map(function(z){return '<option value="'+z+'"'+(z===cur?' selected':'')+'>'+z.replace(/_/g,' ')+'</option>'}).join('')+'</select>'}
+  var diff=Math.round((tzOff(S.tz.b)-tzOff(S.tz.a))/60*10)/10;
+  h+='<div class="card"><div class="lab">Our clocks</div><div class="grid sm"><div class="col"><b>'+esc(nm('a'))+'</b><div class="big" id="clkA" style="font-size:1.6rem"></div>'+sel('tza',S.tz.a)+'</div><div class="col"><b>'+esc(nm('b'))+'</b><div class="big" id="clkB" style="font-size:1.6rem"></div>'+sel('tzb',S.tz.b)+'</div></div><div class="mut">'+(diff===0?'Same time zone.':esc(nm('b'))+' is '+Math.abs(diff)+' h '+(diff>0?'ahead of':'behind')+' '+esc(nm('a'))+'.')+'</div></div>';
+  h+='<div class="card"><div class="lab">Thinking of you</div><p class="mut">One tap sends a little ping to chat.</p><div class="row"><button class="btn pri" data-a="ping">💭 Thinking of you</button><button class="btn" data-a="buzz">📳 Miss-you buzz</button></div></div>';
+  return h
+};
+SUB.recap=function(){
+  var y=new Date().getFullYear(),inY=function(t){return new Date(t).getFullYear()===y};
+  var mA=S.msgs.filter(function(m){return inY(m.t)&&m.from==='a'}).length,mB=S.msgs.filter(function(m){return inY(m.t)&&m.from==='b'}).length;
+  var mem=S.mem.filter(function(m){return String(m.d).slice(0,4)==y}).length,mi=S.miles.filter(function(m){return String(m.d).slice(0,4)==y}).length;
+  var lt=S.letters.filter(function(l){return inY(l.t)}).length,md=S.moods.filter(function(m){return inY(m.t)}),cnt={};md.forEach(function(m){cnt[m.e]=(cnt[m.e]||0)+1});
+  var top=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a]})[0]||'',days=S.since?Math.max(0,Math.floor((Date.now()-new Date(S.since+'T00:00:00'))/DAY)):0;
+  var txt='Our Year in Love '+y+'\n'+(days?days+' days together\n':'')+(mA+mB)+' messages ('+nm('a')+' '+mA+', '+nm('b')+' '+mB+')\n'+mem+' memories, '+mi+' milestones, '+lt+' letters\n'+md.length+' mood check-ins'+(top?', most often '+top:'');
+  window.__recap=txt;
+  return '<h2>Our Year in Love '+y+'</h2><div class="card glow"><div class="grid sm"><div><div class="big">'+(mA+mB)+'</div><div class="lab">messages</div></div><div><div class="big">'+mem+'</div><div class="lab">memories</div></div><div><div class="big">'+mi+'</div><div class="lab">milestones</div></div><div><div class="big">'+lt+'</div><div class="lab">letters</div></div><div><div class="big">'+md.length+'</div><div class="lab">check-ins</div></div><div><div class="big">'+(top||'—')+'</div><div class="lab">top mood</div></div></div></div><div class="card"><div class="mut">'+nm('a')+' sent '+mA+' and '+nm('b')+' sent '+mB+' messages this year.</div><button class="btn pri" data-a="copyRecap">Copy recap</button></div>'
+};
+SUB.security=function(){
+  return '<h2>Security</h2><div class="card"><div class="lab">What protects your chat</div><div class="list">'+[['Messages are encrypted on the phone (AES-GCM) before they leave it','when phones are connected'],['The database stores only scrambled text; the key is in the pairing code','when phones are connected'],['Only the two of you hold the pairing code','always'],['App PIN lock on open','Profile'],['Backup file of every message and photo','Profile, Chat vault']].map(function(x){return '<div class="item"><div>'+x[0]+'</div><span class="chip">'+x[1]+'</span></div>'}).join('')+'</div></div><div class="card"><div class="lab">Honest limits</div><p class="mut">Data stored on a phone is not encrypted by BuBu itself, so use the PIN and your phone lock. Anyone with the pairing code can read the chat, so never share it. Timestamps and message sizes are visible to the database. Fingerprint unlock and push alerts when the app is closed come with the Android app wrapper.</p></div>'
+};
+
+/* gift studio */
+function studioSec(title,body){return '<div class="card"><div class="lab">'+title+'</div>'+body+'</div>'}
+SUB.studio=function(){
+  if(S.me!=='a')return empty('Only the gift giver can edit this');
+  var g=S.gift,r=giftReady();
+  var chk=r.items.map(function(i){return '<div class="item"><div>'+(i[1]?'✓ ':'○ ')+esc(i[0])+(i[2]?'<div class="mut">'+esc(i[2])+'</div>':'')+'</div></div>'}).join('');
+  var h='<h2>Gift Studio</h2><div class="card glow"><div class="lab">Gift readiness · '+r.ok+' of '+r.total+'</div><div class="list">'+chk+'</div><div class="row"><button class="btn" data-a="seedGift">Fill empty parts with sample text</button><button class="btn" data-a="previewGift">Preview as her</button><button class="btn" data-a="resetPrev">Reset preview</button></div><div class="row"><button class="btn pri" data-a="publishGift">Publish to her phone</button>'+(g.pubAt?'<span class="pill on">Published '+esc(fmtTime(g.pubAt))+'</span>':'')+'</div></div>';
+  h+=studioSec('Basics','<label class="f">Her name or nickname<input id="gname" value="'+esc(S.names.b==='Her'?'':S.names.b)+'"></label><label class="f">Gift opens on<input type="date" id="gdate" value="'+esc(g.unlock)+'"></label><label class="f">Message after the candles<textarea id="gintro" placeholder="'+esc(DEFAULT_INTRO)+'">'+esc(g.intro)+'</textarea></label><button class="btn pri" data-a="saveBasics">Save</button>');
+  h+=studioSec('Reasons I love you (one per line)','<textarea id="greasons" style="min-height:160px">'+esc(g.reasons.join('\n'))+'</textarea><button class="btn pri" data-a="saveReasons">Save reasons</button>');
+  h+=studioSec('Our story (photos in the movie)','<div class="row"><label class="f" style="flex:1">Photo<input type="file" id="sfile" accept="image/*"></label><label class="f" style="flex:1">Date<input type="date" id="sdate"></label></div><label class="f">Caption<input id="scap" placeholder="Our first trip"></label><button class="btn pri" data-a="addStory">Add to the movie</button>'+(g.story.length?'<div class="list">'+storyList().map(function(s){return '<div class="item"><div>'+(s.img?'<img src="'+mu(s.img)+'" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:10px;float:left;margin-right:10px">':'')+'<b>'+esc(s.c||'(no caption)')+'</b><div class="mut">'+esc(s.d||'no date')+'</div></div><button class="btn sm ghost" data-a="delStory" data-id="'+s.id+'">Remove</button></div>'}).join('')+'</div>':'')+'<label class="f">Background music (mp3, up to 4 MB)<input type="file" id="gmus" accept="audio/*"></label>'+(g.music?'<div class="row"><audio controls src="'+mu(g.music)+'" style="max-width:100%"></audio><button class="btn sm" data-a="delMusic">Remove</button></div>':''));
+  h+=studioSec('Open-when letters','<div class="col">'+g.letters.map(function(l,i){return '<div class="col"><input id="lt'+i+'" value="'+esc(l.t)+'" placeholder="Open when..."><textarea id="lb'+i+'" placeholder="Write the letter. Use {her} for her name.">'+esc(l.b)+'</textarea></div>'}).join('')+'</div><div class="row"><button class="btn pri" data-a="saveLetters">Save letters</button><button class="btn" data-a="addLetter2">Add another letter</button></div>');
+  h+=studioSec('Coupons (one per line)','<textarea id="gcoupons" style="min-height:120px">'+esc(g.coupons.map(function(c){return c.t}).join('\n'))+'</textarea><button class="btn pri" data-a="saveCoupons">Save coupons</button>');
+  h+=studioSec('Final surprise','<label class="f">Message she reads when she finds the hidden heart<textarea id="gfinal" style="min-height:160px">'+esc(g.final.text)+'</textarea></label><div class="row"><button class="btn" id="recbtn2" data-a="rec2">🎙 Record voice message</button><label class="btn" style="cursor:pointer">Upload audio<input type="file" id="gvfile" accept="audio/*" class="hide"></label></div>'+(g.final.voice&&mu(g.final.voice)?'<div class="row"><audio controls src="'+mu(g.final.voice)+'" style="max-width:100%"></audio><button class="btn sm" data-a="delVoice">Remove</button></div>':'')+'<label class="f">Secret message (shown when she taps the BuBu logo 7 times)<textarea id="gsecret">'+esc(g.secret)+'</textarea></label><button class="btn pri" data-a="saveFinal">Save</button>');
+  return h
+};
+
+/* profile */
+function profileExtra(){
+  var h='';
+  h+='<div class="card"><div class="lab">Birthdays</div><div class="row"><label class="f" style="flex:1">'+esc(nm('a'))+'<input type="date" id="bda" value="'+esc(S.bd.a)+'"></label><label class="f" style="flex:1">'+esc(nm('b'))+'<input type="date" id="bdb" value="'+esc(S.bd.b)+'"></label></div><button class="btn pri" data-a="saveBd">Save birthdays</button></div>';
+  h+='<div class="card"><div class="lab">App PIN</div><p class="mut">'+(S.pin?'A PIN is asked every time the app opens.':'Ask for a PIN every time the app opens. Fingerprint unlock comes with the Android app wrapper.')+'</p><div class="row"><button class="btn pri" data-a="pinSet">'+(S.pin?'Change PIN':'Set a PIN')+'</button>'+(S.pin?'<button class="btn" data-a="pinOff">Remove PIN</button>':'')+'</div></div>';
+  h+='<div class="card"><div class="lab">Connect our phones</div>';
+  if(syncOn())h+='<div class="row"><span class="pill on" id="syncpill">'+syncLabel()+'</span><span class="pill" id="peer">'+esc(peerTxt())+'</span></div><p class="mut">Messages are encrypted on the phone before they are sent. The database only holds scrambled text. The pairing code is the key, so keep it private.</p><div class="row"><button class="btn" data-a="copyPair">Copy pairing code</button><button class="btn" data-a="syncTest">Test connection</button><button class="btn" data-a="syncOff">Disconnect</button></div>';
+  else if(S.me==='a')h+='<p class="mut">Make one free Firebase Realtime Database, paste its URL, and BuBu creates a pairing code for her phone.</p><input id="fburl" placeholder="https://your-project-default-rtdb.firebaseio.com"><div class="row"><button class="btn pri" data-a="makePair">Create pairing code</button><button class="btn" data-a="fbHelp">How to set it up</button></div>';
+  else h+='<p class="mut">Use the pairing code from his phone when joining.</p>';
+  h+='</div>';
+  h+='<div class="card"><div class="lab">Chat vault</div><p class="mut">A backup file holds every message, photo, voice note and setting. '+(S.lastBackup?'Last backup: '+esc(fmtDate(S.lastBackup))+'.':'No backup yet.')+' Save it somewhere safe so years of chat can never be lost.</p><div class="row"><button class="btn pri" data-a="backup">Back up now</button><label class="btn" style="cursor:pointer">Restore a backup<input type="file" id="rfile" accept=".json,application/json" class="hide"></label></div></div>';
+  h+='<div class="card"><div class="lab">Build status</div><div class="list">'+[['Chat, gift, memories, letters, plans, mood, pet, games, ARMY Zone','works on this phone'],['Chat between two phones, online status, gift delivery','needs the free Firebase database above'],['Push alerts when the app is closed, fingerprint, saving files','comes with the Android app wrapper'],['Voice and video calls','planned for phase 2']].map(function(r){return '<div class="item"><div>'+r[0]+'</div><span class="chip">'+r[1]+'</span></div>'}).join('')+'</div></div>';
+  h+='<div class="card"><div class="lab">Your data</div><div class="row"><button class="btn" data-a="backup">Back up everything</button><button class="btn" data-a="reset">Erase everything</button></div></div>';
+  return h
+}
+var oldProfile=P.profile;
+P.profile=function(){var h=oldProfile(),i=h.indexOf('<div class="card"><div class="lab">Build status</div>');return h.slice(0,i)+profileExtra()};
+
+/* ===== actions ===== */
+function closeModals(){document.querySelectorAll('.modal').forEach(function(m){m.remove()})}
+Object.assign(A,{
+ openGift:function(){if(S.me==='a')gPrev=true;else gPrev=false;gStep=0;blown=false;go('gift')},
+ previewGift:function(){gPrev=true;gStep=0;blown=false;go('gift')},
+ giftExit:function(){gPrev=false;go('home')},
+ gNext:function(){gGo(gStep+1)},gBack:function(){gGo(gStep-1)},
+ blowMic:startBlow,blowTap:blowOut,
+ stPlay:function(){var L=storyList();if(!L.length)return;if(storyPlay){storyPlay=false;clearInterval(storyI);if(bgm)bgm.pause()}else{if(storyIdx>=L.length-1)storyIdx=0;storyPlay=true;audioPlay();storyTimer()}storyGo(storyIdx);var p=$('#stplay');if(p)p.textContent=storyPlay?'Pause':'Play our story'},
+ stNext:function(){storyGo(storyIdx+1);if(storyPlay)storyTimer()},
+ stPrev:function(){storyGo(storyIdx-1);if(storyPlay)storyTimer()},
+ gLetter:function(t){var l=S.gift.letters.filter(function(x){return x.id===t.dataset.id})[0];if(!l)return;gs('letters')[l.id]=1;save();modal('<div class="letter-open"><div class="lab">'+esc(l.t)+'</div><div style="white-space:pre-wrap;margin:10px 0;font-family:var(--f-d);font-size:1.15rem">'+esc(fill(l.b))+'</div><button class="btn pri" data-a="closeModal">Close</button></div>');hearts(5)},
+ redeem:function(t){var c=S.gift.coupons.filter(function(x){return x.id===t.dataset.id})[0];if(!c)return;if(gPrev&&S.me==='a'){toast('Preview only. She can redeem this on her phone.');return}confirmBox('Redeem "'+fill(c.t)+'"? He will get a message.',function(){c.red=Date.now();save();sendMsg({text:'🎟 Coupon redeemed: '+fill(c.t),card:1});hearts(8);refreshGiftInner()})},
+ thanks:function(){if(gPrev&&S.me==='a'){toast('Preview only. She can send a thank-you from her phone.');return}sendMsg({text:'💜 Thank you for my gift. I love it, and I love you.',card:1});toast('Sent to chat');hearts(10)},
+ goChat:function(){closeModals();gPrev=false;go('chat')},
+ resetPrev:function(){S.gift.seen={reasons:{},letters:{}};S.gift.hp=null;save();toast('Preview progress reset')},
+ /* studio */
+ seedGift:function(){var g=S.gift;g.sample=g.sample||{};
+  if(!g.reasons.length){g.reasons=SAMPLE.reasons.slice();g.sample.reasons=1}
+  if(!g.letters.length){g.letters=SAMPLE.letters.map(function(l){return {id:uid(),t:l[0],b:l[1]}});g.sample.letters=1}
+  if(!g.coupons.length){g.coupons=SAMPLE.coupons.map(function(c){return {id:uid(),t:c,red:0}});g.sample.coupons=1}
+  if(!g.final.text){g.final.text=SAMPLE.final;g.sample.final=1}
+  save();render();toast('Sample text added. Please rewrite it in your own words.')},
+ saveBasics:function(){var n=v('gname'),d=v('gdate');if(n)S.names.b=n;if(d)S.gift.unlock=d;S.gift.intro=v('gintro');save();pushProfile();render();toast('Saved')},
+ saveReasons:function(){S.gift.reasons=raw('greasons').split('\n').map(function(x){return x.trim()}).filter(Boolean);S.gift.sample.reasons=0;S.gift.seen.reasons={};save();render();toast('Reasons saved')},
+ addStory:function(){var f=$('#sfile').files[0],cap=v('scap'),d=v('sdate');if(!f&&!cap)return toast('Add a photo or a caption.');function done(img){S.gift.story.push({id:uid(),img:img||'',c:cap,d:d});save();render();toast('Added to the movie')}if(f)saveImg(f,done);else done('')},
+ delStory:function(t){S.gift.story=S.gift.story.filter(function(x){return x.id!==t.dataset.id});save();render()},
+ delMusic:function(){S.gift.music='';save();render()},
+ saveLetters:function(){S.gift.letters.forEach(function(l,i){var a=document.getElementById('lt'+i),b=document.getElementById('lb'+i);if(a)l.t=a.value.trim()||'Open when...';if(b)l.b=b.value.trim()});S.gift.sample.letters=0;S.gift.seen.letters={};save();render();toast('Letters saved')},
+ addLetter2:function(){S.gift.letters.push({id:uid(),t:'Open when...',b:''});save();render()},
+ saveCoupons:function(){var old={};S.gift.coupons.forEach(function(c){old[c.t]=c});S.gift.coupons=raw('gcoupons').split('\n').map(function(x){return x.trim()}).filter(Boolean).map(function(t){return old[t]||{id:uid(),t:t,red:0}});S.gift.sample.coupons=0;save();render();toast('Coupons saved')},
+ saveFinal:function(){S.gift.final.text=raw('gfinal').trim();S.gift.secret=raw('gsecret').trim();S.gift.sample.final=0;save();render();toast('Saved')},
+ rec2:function(){recToggle('final')},
+ delVoice:function(){S.gift.final.voice='';save();render()},
+ publishGift:publishGift,
+ /* chat */
+ rec:function(){recToggle('chat')},
+ buzz:function(){sendMsg({text:'📳 '+nm(S.me)+' is missing you',card:1});try{navigator.vibrate&&navigator.vibrate([120,60,120])}catch(e){}hearts(6);toast('Buzz sent');if(S.page==='chat')render()},
+ ping:function(){sendMsg({text:'💭 Thinking of you',card:1});hearts(5);toast('Sent to chat')},
+ gm:function(){sendMsg({text:pick(GM),card:1});render()},
+ gn:function(){sendMsg({text:pick(GN),card:1});render()},
+ react:function(t){var m=findMsg(t.dataset.id);if(!m)return;m.rx=m.rx===t.dataset.e?'':t.dataset.e;chatSel=null;save();syncMsg(m);render()},
+ pin:function(t){var m=findMsg(t.dataset.id);if(!m)return;m.pin=!m.pin;chatSel=null;save();syncMsg(m);render()},
+ edit:function(t){var m=findMsg(t.dataset.id);if(!m)return;var mo=modal('<h3>Edit message</h3><textarea id="etx">'+esc(m.text)+'</textarea><div class="row"><button class="btn pri" id="ok">Save</button><button class="btn" id="no">Cancel</button></div>');$('#ok',mo).onclick=function(){m.text=$('#etx').value;m.edited=1;save();syncMsg(m);mo.remove();chatSel=null;render()};$('#no',mo).onclick=function(){mo.remove()}},
+ del:function(t){confirmBox('This removes the message from both phones.',function(){var id=t.dataset.id;S.msgs=S.msgs.filter(function(x){return x.id!==id});chatSel=null;save();syncDel(id);render()})},
+ /* profile */
+ saveProf:function(){S.names.a=v('na')||'Me';S.names.b=v('nb')||'Her';S.since=v('since2');save();pushProfile();render();toast('Saved')},
+ saveBd:function(){S.bd={a:v('bda'),b:v('bdb')};save();pushProfile();toast('Birthdays saved')},
+ backup:doBackup,
+ pinSet:function(){var m=modal('<h3>'+(S.pin?'Change PIN':'Set a PIN')+'</h3><p class="mut">4 to 8 digits.</p><input id="pn1" type="password" inputmode="numeric" maxlength="8" placeholder="New PIN"><input id="pn2" type="password" inputmode="numeric" maxlength="8" placeholder="Repeat PIN"><div class="row"><button class="btn pri" id="ok">Save</button><button class="btn" id="no">Cancel</button></div>');$('#no',m).onclick=function(){m.remove()};$('#ok',m).onclick=function(){var a=$('#pn1',m).value,b=$('#pn2',m).value;if(!/^\d{4,8}$/.test(a))return toast('Use 4 to 8 digits.');if(a!==b)return toast('The two PINs do not match.');var salt=h2(rndBytes(16));pbk(a,salt).then(function(h){S.pin={salt:salt,hash:h};window.__pinOk=true;save();m.remove();render();toast('PIN saved')})}},
+ pinOff:function(){confirmBox('Remove the PIN lock?',function(){S.pin=null;save();render()})},
+ pinGo:function(){var now=Date.now();if(S.auth.lockUntil>now)return authErr('Too many attempts. Wait '+Math.ceil((S.auth.lockUntil-now)/1000)+' seconds.');pbk(raw('pinin'),S.pin.salt).then(function(h){if(h===S.pin.hash){window.__pinOk=true;S.auth.fails=0;save();render()}else{failAuth();var c=$('#pincard');if(c)c.classList.add('shake');authErr('Wrong PIN.')}})},
+ copyRecap:function(){cp(window.__recap||'')},
+ /* sync */
+ makePair:function(){var u=v('fburl').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9-]+\.(firebaseio\.com|firebasedatabase\.app)$/i.test(u))return toast('Paste the database URL, like https://name-default-rtdb.firebaseio.com');S.sync={u:u,r:h2(rndBytes(12)),k:h2(rndBytes(16)),on:true};save();syncStart();pushProfile();render();var code=pairOf(S.sync);modal('<h3>Pairing code</h3><p class="mut">Send this to her privately and have her paste it when joining. It is the key to your chat.</p><textarea id="pcode" readonly style="min-height:110px">'+esc(code)+'</textarea><div class="row"><button class="btn pri" data-a="copyPair">Copy</button><button class="btn" data-a="closeModal">Done</button></div>')},
+ copyPair:function(){if(syncOn())cp(pairOf(S.sync))},
+ syncTest:function(){dbPut('/t',Date.now()).then(function(r){return r.ok?dbGet('/t'):Promise.reject()}).then(function(){toast('Connection works ✓')}).catch(function(){toast('Cannot reach the database. Check the URL and rules.')})},
+ syncOff:function(){confirmBox('Chat will stay on this phone only until you connect again. Your messages are kept.',function(){S.sync=null;save();syncStart();render()})},
+ fbHelp:function(){modal('<h3>Free private database</h3><ol style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px"><li>Open console.firebase.google.com and add a project (turn Analytics off).</li><li>Build, Realtime Database, Create database (any region).</li><li>Open the Rules tab, paste the rules below, press Publish.</li><li>Copy the database URL from the top of the Data tab and paste it here.</li></ol><textarea readonly style="min-height:96px;margin-top:8px">{"rules":{"r":{"$room":{".read":true,".write":true}}}}</textarea><p class="mut">The long random room name works like a password, and everything inside is encrypted.</p><button class="btn pri" data-a="closeModal">Got it</button>')}
+});
+
+/* ===== events ===== */
+document.addEventListener('change',function(e){
+  var t=e.target;if(!t||!t.id)return;
+  if(t.id==='dis'){S.dis=+t.value;save();toast(S.dis?'Disappearing messages on':'Disappearing messages off')}
+  else if(t.id==='tza'||t.id==='tzb'){S.tz[t.id==='tza'?'a':'b']=t.value;save();pushProfile();render()}
+  else if(t.id==='gvfile'&&t.files[0]){if(t.files[0].size>2e6)return toast('Keep the voice file under 2 MB.');saveFile(t.files[0],function(ref){S.gift.final.voice=ref;save();render()})}
+  else if(t.id==='gmus'&&t.files[0]){if(t.files[0].size>4e6)return toast('Keep the music under 4 MB.');saveFile(t.files[0],function(ref){S.gift.music=ref;save();render()})}
+  else if(t.id==='rfile'&&t.files[0])doRestore(t.files[0])
+});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='pinin'){e.preventDefault();A.pinGo()}});
+var bt=0,btT=null;
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('.brand');if(!b||b.closest('.splash'))return;
+  bt++;clearTimeout(btT);btT=setTimeout(function(){bt=0},1500);
+  if(bt>=7){bt=0;modal('<h3>Secret</h3><p>'+esc(fill(S.gift.secret||'Psst. Someone built this just so you would always have one place that is only yours.'))+'</p><button class="btn pri" data-a="closeModal">💜</button>');hearts(12)}
+});
+window.addEventListener('online',function(){flushQ();poll()});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')poll()});
+setInterval(function(){purge();flushQ()},20000);
+
+/* ===== boot ===== */
+var booted=false;
+function boot(){
+  if(booted)return;booted=true;
+  var sp=$('#spname');if(sp&&S.names.b&&S.names.b!=='Her')sp.textContent='for '+S.names.b;
+  render();syncStart();
+  setTimeout(function(){$('#splash').classList.add('off')},900);
+  if(S.msgs.length>20&&Date.now()-(S.lastBackup||0)>14*DAY)setTimeout(function(){toast('Time for a backup: Profile, Chat vault.')},4000)
+}
+Promise.race([mLoadAll(),new Promise(function(r){setTimeout(r,1500)})]).then(boot);
+
+
+})();
+</script>
+
+</body></html>
